@@ -1,4 +1,4 @@
-# USB-ERB24
+# USB-ERB24™
 C#/.Net library for Measurement Computing's USB-ERB24™ Relay Board.
 
 - https://www.mccdaq.com/usb-data-acquisition/USB-ERB08-Series.aspx
