@@ -1,0 +1,47 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\phill\\source\\repos\\USB-ERB24\\USB-ERB24.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\phill\\source\\repos\\USB-ERB24\\USB-ERB24.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\phill\\source\\repos\\USB-ERB24\\USB-ERB24.csproj",
+        "projectName": "USB-ERB24",
+        "projectPath": "C:\\Users\\phill\\source\\repos\\USB-ERB24\\USB-ERB24.csproj",
+        "packagesPath": "C:\\Users\\phill\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\phill\\source\\repos\\USB-ERB24\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\phill\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net48"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net48": {
+            "targetAlias": "net48",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net48": {
+          "targetAlias": "net48",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
