@@ -13,4 +13,7 @@
     <SourceRoot Include="C:\Users\phils\.nuget\packages\" />
     <SourceRoot Include="C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\" />
   </ItemGroup>
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)mstest.testadapter\3.0.2\build\net462\MSTest.TestAdapter.props" Condition="Exists('$(NuGetPackageRoot)mstest.testadapter\3.0.2\build\net462\MSTest.TestAdapter.props')" />
+  </ImportGroup>
 </Project>
