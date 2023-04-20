@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -19,7 +19,7 @@ namespace ABT.Switching.Tests {
 
         private static IEnumerable<Object[]> GetRs { get { return new[] { new Object[] { GetRHashSet() } }; } }
 
-        private static IEnumerable<Object[]> GetReCs { get { return new[] { new Object[] { GetDictionaryReC_NC(), GetDictionaryReC_NO() } }; } }
+        private static IEnumerable<Object[]> GetRεCs { get { return new[] { new Object[] { GetDictionaryRεC_NC(), GetDictionaryRεC_NO() } }; } }
 
         private static IEnumerable<Object[]> GetUE24s { get { return new[] { new Object[] { GetUE24HashSet() } }; } }
 
@@ -33,11 +33,11 @@ namespace ABT.Switching.Tests {
             if (dr == DialogResult.Cancel) Assert.Inconclusive();
         }
 
-        private static Dictionary<R, C> GetDictionaryReC_NC() { return GetRHashSet().ToDictionary(r => r, r => C.NC); }
+        private static Dictionary<R, C> GetDictionaryRεC_NC() { return GetRHashSet().ToDictionary(r => r, r => C.NC); }
 
-        private static Dictionary<R, C> GetDictionaryReC_NO() { return GetRHashSet().ToDictionary(r => r, r => C.NO); }
+        private static Dictionary<R, C> GetDictionaryRεC_NO() { return GetRHashSet().ToDictionary(r => r, r => C.NO); }
 
-        private static Dictionary<R, C> GetDictionaryReC_AA() {
+        private static Dictionary<R, C> GetDictionaryRεC_AA() {
             return new Dictionary<R, C>() {
                 {R.C01, C.NC}, {R.C02, C.NO}, {R.C03, C.NC}, {R.C04, C.NO}, {R.C05, C.NC}, {R.C06, C.NO}, {R.C07, C.NC}, {R.C08, C.NO},
                 {R.C09, C.NC}, {R.C10, C.NO}, {R.C11, C.NC}, {R.C12, C.NO}, {R.C13, C.NC}, {R.C14, C.NO}, {R.C15, C.NC}, {R.C16, C.NO},
@@ -45,7 +45,7 @@ namespace ABT.Switching.Tests {
             };
         }
 
-        private static Dictionary<R, C> GetDictionaryReC_55() {
+        private static Dictionary<R, C> GetDictionaryRεC_55() {
             return new Dictionary<R, C>() {
                 {R.C01, C.NO}, {R.C02, C.NC}, {R.C03, C.NO}, {R.C04, C.NC}, {R.C05, C.NO}, {R.C06, C.NC}, {R.C07, C.NO}, {R.C08, C.NC},
                 {R.C09, C.NO}, {R.C10, C.NC}, {R.C11, C.NO}, {R.C12, C.NC}, {R.C13, C.NO}, {R.C14, C.NC}, {R.C15, C.NO}, {R.C16, C.NC},
@@ -53,7 +53,7 @@ namespace ABT.Switching.Tests {
             };
         }
 
-        private static Dictionary<R, C> GetDictionaryReC_Ax() {
+        private static Dictionary<R, C> GetDictionaryRεC_Ax() {
             return new Dictionary<R, C>() {
                 {R.C02, C.NO}, {R.C04, C.NO}, {R.C06, C.NO}, {R.C08, C.NO},
                 {R.C10, C.NO}, {R.C12, C.NO}, {R.C14, C.NO}, {R.C16, C.NO},
@@ -61,7 +61,7 @@ namespace ABT.Switching.Tests {
             };
         }
 
-        private static Dictionary<R, C> GetDictionaryReC_5x() {
+        private static Dictionary<R, C> GetDictionaryRεC_5x() {
             return new Dictionary<R, C>() {
                 {R.C01, C.NO}, {R.C03, C.NO}, {R.C05, C.NO}, {R.C07, C.NO},
                 {R.C09, C.NO}, {R.C11, C.NO}, {R.C13, C.NO}, {R.C15, C.NO},
@@ -195,13 +195,13 @@ namespace ABT.Switching.Tests {
         }
 
         [TestMethod()]
-        [DynamicData(nameof(GetReCs))]
-        public void AreReC_Test(Dictionary<R, C> ReC_NC, Dictionary<R, C> ReC_NO) {
+        [DynamicData(nameof(GetRεCs))]
+        public void AreRεC_Test(Dictionary<R, C> RεC_NC, Dictionary<R, C> RεC_NO) {
             MccBoard mccBoard = GetMccBoard(UE24.E01);
             PortsWrite(mccBoard, ports0x00);
-            Assert.IsTrue(Are(UE24.E01, ReC_NC));
+            Assert.IsTrue(Are(UE24.E01, RεC_NC));
             PortsWrite(mccBoard, ports0xFF);
-            Assert.IsTrue(Are(UE24.E01, ReC_NO));
+            Assert.IsTrue(Are(UE24.E01, RεC_NO));
         }
 
         [TestMethod()]
@@ -239,15 +239,15 @@ namespace ABT.Switching.Tests {
 
         [TestMethod()]
         [DynamicData(nameof(GetUE24s))]
-        public void AreUE24s_ReC_Test(HashSet<UE24> UE24s) {
-            Dictionary<UE24, Dictionary<R, C>> UE24eReC = UE24s.ToDictionary(ue24 => ue24, ue24 => GetDictionaryReC_NC());
+        public void AreUE24s_RεC_Test(HashSet<UE24> UE24s) {
+            Dictionary<UE24, Dictionary<R, C>> UE24εRεC = UE24s.ToDictionary(ue24 => ue24, ue24 => GetDictionaryRεC_NC());
 
             foreach (UE24 UE24 in UE24s) {
                 PortsWrite(GetMccBoard(UE24), ports0x00);
-                Assert.IsTrue(Are(UE24eReC));
+                Assert.IsTrue(Are(UE24εRεC));
                 PortsWrite(GetMccBoard(UE24), ports0xFF);
-                UE24eReC = UE24s.ToDictionary(ue24 => ue24, ue24 => GetDictionaryReC_NO());
-                Assert.IsTrue(Are(UE24eReC));
+                UE24εRεC = UE24s.ToDictionary(ue24 => ue24, ue24 => GetDictionaryRεC_NO());
+                Assert.IsTrue(Are(UE24εRεC));
             }
         }
 
@@ -282,24 +282,24 @@ namespace ABT.Switching.Tests {
         public void Get_Test() {
             MccBoard mccBoard = GetMccBoard(UE24.E01);
             PortsWrite(mccBoard, ports0x00);
-            Dictionary<R, C> ReC = Get(UE24.E01);
-            foreach (KeyValuePair<R, C> kvp in ReC) Assert.AreEqual(kvp.Value, C.NC);
+            Dictionary<R, C> RεC = Get(UE24.E01);
+            foreach (KeyValuePair<R, C> kvp in RεC) Assert.AreEqual(kvp.Value, C.NC);
             PortsWrite(mccBoard, ports0xFF);
-            ReC = Get(UE24.E01);
-            foreach (KeyValuePair<R, C> kvp in ReC) Assert.AreEqual(kvp.Value, C.NO);
+            RεC = Get(UE24.E01);
+            foreach (KeyValuePair<R, C> kvp in RεC) Assert.AreEqual(kvp.Value, C.NO);
         }
 
         [TestMethod()]
-        public void GetReC_Test() {
+        public void GetRεC_Test() {
             MccBoard mccBoard = GetMccBoard(UE24.E01);
             PortsWrite(mccBoard, ports0x00);
-            Dictionary<UE24, Dictionary<R, C>> UE24eReC_Test = new Dictionary<UE24, Dictionary<R, C>>();
-            foreach (UE24 UE24 in GetUE24HashSet()) UE24eReC_Test.Add(UE24, GetDictionaryReC_NC());
-            Dictionary<UE24, Dictionary<R, C>> UE24eReC = Get();
-            Assert.AreEqual(UE24eReC_Test.Count, UE24eReC.Count);
+            Dictionary<UE24, Dictionary<R, C>> UE24εRεC_Test = new Dictionary<UE24, Dictionary<R, C>>();
+            foreach (UE24 UE24 in GetUE24HashSet()) UE24εRεC_Test.Add(UE24, GetDictionaryRεC_NC());
+            Dictionary<UE24, Dictionary<R, C>> UE24εRεC = Get();
+            Assert.AreEqual(UE24εRεC_Test.Count, UE24εRεC.Count);
             foreach (UE24 UE24 in GetUE24HashSet()) {
-                Assert.AreEqual(UE24eReC_Test[UE24].Count, UE24eReC[UE24].Count);
-                Assert.IsTrue(!UE24eReC_Test[UE24].Except(UE24eReC[UE24]).Any());
+                Assert.AreEqual(UE24εRεC_Test[UE24].Count, UE24εRεC[UE24].Count);
+                Assert.IsTrue(!UE24εRεC_Test[UE24].Except(UE24εRεC[UE24]).Any());
             }
         }
 
@@ -307,16 +307,16 @@ namespace ABT.Switching.Tests {
         public void GetRs_Test() {
             MccBoard mccBoard = GetMccBoard(UE24.E01);
             PortsWrite(mccBoard, ports0x00);
-            Dictionary<R, C> ReC_Test = GetDictionaryReC_NC();
-            Dictionary<R, C> ReC = Get(UE24.E01, GetRHashSet());
-            Assert.AreEqual(ReC_Test.Count, ReC.Count);
-            Assert.IsTrue(!ReC.Except(ReC_Test).Any());
+            Dictionary<R, C> RεC_Test = GetDictionaryRεC_NC();
+            Dictionary<R, C> RεC = Get(UE24.E01, GetRHashSet());
+            Assert.AreEqual(RεC_Test.Count, RεC.Count);
+            Assert.IsTrue(!RεC.Except(RεC_Test).Any());
 
             PortsWrite(mccBoard, ports0xFF);
-            ReC_Test = GetDictionaryReC_NO();
-            ReC = Get(UE24.E01, GetRHashSet());
-            Assert.AreEqual(ReC_Test.Count, ReC.Count);
-            Assert.IsTrue(!ReC.Except(ReC_Test).Any());
+            RεC_Test = GetDictionaryRεC_NO();
+            RεC = Get(UE24.E01, GetRHashSet());
+            Assert.AreEqual(RεC_Test.Count, RεC.Count);
+            Assert.IsTrue(!RεC.Except(RεC_Test).Any());
         }
 
         [TestMethod()]
@@ -332,20 +332,20 @@ namespace ABT.Switching.Tests {
         }
 
         [TestMethod()]
-        public void SetUE24_ReC_Test() {
-            Set(UE24.E01, GetDictionaryReC_NC());
+        public void SetUE24_RεC_Test() {
+            Set(UE24.E01, GetDictionaryRεC_NC());
             Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
 
-            Set(UE24.E01, GetDictionaryReC_Ax());
+            Set(UE24.E01, GetDictionaryRεC_Ax());
             Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
 
-            Set(UE24.E01, GetDictionaryReC_NO());
+            Set(UE24.E01, GetDictionaryRεC_NO());
             Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
 
-            Set(UE24.E01, GetDictionaryReC_AA());
+            Set(UE24.E01, GetDictionaryRεC_AA());
             Assert.IsTrue(ports0xAA.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
 
-            Set(UE24.E01, GetDictionaryReC_55());
+            Set(UE24.E01, GetDictionaryRεC_55());
             Assert.IsTrue(ports0x55.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
         }
 
@@ -398,14 +398,14 @@ namespace ABT.Switching.Tests {
 
         [TestMethod()]
         [DynamicData(nameof(GetUE24s))]
-        public void SetUE24s_ReC_Test(HashSet<UE24> UE24s) {
-            Dictionary<UE24, Dictionary<R, C>> UE24ReCReC = new Dictionary<UE24, Dictionary<R, C>>();
-            foreach (UE24 UE24 in UE24s) UE24ReCReC.Add(UE24, GetDictionaryReC_NC());
-            Set(UE24ReCReC);
+        public void SetUE24εRεC_Test(HashSet<UE24> UE24s) {
+            Dictionary<UE24, Dictionary<R, C>> UE24εRεC = new Dictionary<UE24, Dictionary<R, C>>();
+            foreach (UE24 UE24 in UE24s) UE24εRεC.Add(UE24, GetDictionaryRεC_NC());
+            Set(UE24εRεC);
             foreach (UE24 UE24 in UE24s) Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(GetMccBoard(UE24))));
-            UE24ReCReC = new Dictionary<UE24, Dictionary<R, C>>();
-            foreach (UE24 UE24 in UE24s) UE24ReCReC.Add(UE24, GetDictionaryReC_NO());
-            Set(UE24ReCReC);
+            UE24εRεC = new Dictionary<UE24, Dictionary<R, C>>();
+            foreach (UE24 UE24 in UE24s) UE24εRεC.Add(UE24, GetDictionaryRεC_NO());
+            Set(UE24εRεC);
             foreach (UE24 UE24 in UE24s) Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(GetMccBoard(UE24))));
         }
 
