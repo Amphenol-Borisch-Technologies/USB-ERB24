@@ -10,3 +10,15 @@ C:\Users\phill\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.csproj.CoreCompi
 C:\Users\phill\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.csproj.CopyComplete
 C:\Users\phill\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.dll
 C:\Users\phill\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.pdb
+C:\Users\phils\Source\Repos\USB-ERB24\bin\Debug\net48\USB-ERB24.dll
+C:\Users\phils\Source\Repos\USB-ERB24\bin\Debug\net48\USB-ERB24.pdb
+C:\Users\phils\Source\Repos\USB-ERB24\bin\Debug\net48\MccDaq.dll
+C:\Users\phils\Source\Repos\USB-ERB24\bin\Debug\net48\MccDaq.xml
+C:\Users\phils\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.csproj.AssemblyReference.cache
+C:\Users\phils\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\phils\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.AssemblyInfoInputs.cache
+C:\Users\phils\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.AssemblyInfo.cs
+C:\Users\phils\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.csproj.CoreCompileInputs.cache
+C:\Users\phils\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.csproj.CopyComplete
+C:\Users\phils\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.dll
+C:\Users\phils\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.pdb

@@ -8,19 +8,24 @@
     ".NETFramework,Version=v4.8": []
   },
   "packageFolders": {
-    "C:\\Users\\phill\\.nuget\\packages\\": {}
+    "C:\\Users\\phils\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\phill\\source\\repos\\USB-ERB24\\USB-ERB24.csproj",
+      "projectUniqueName": "C:\\Users\\phils\\Source\\Repos\\USB-ERB24\\USB-ERB24.csproj",
       "projectName": "USB-ERB24",
-      "projectPath": "C:\\Users\\phill\\source\\repos\\USB-ERB24\\USB-ERB24.csproj",
-      "packagesPath": "C:\\Users\\phill\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\phill\\source\\repos\\USB-ERB24\\obj\\",
+      "projectPath": "C:\\Users\\phils\\Source\\Repos\\USB-ERB24\\USB-ERB24.csproj",
+      "packagesPath": "C:\\Users\\phils\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\phils\\Source\\Repos\\USB-ERB24\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\phill\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\phils\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -45,7 +50,7 @@
     "frameworks": {
       "net48": {
         "targetAlias": "net48",
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   }

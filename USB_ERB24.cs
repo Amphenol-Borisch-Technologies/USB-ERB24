@@ -4,10 +4,9 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using MccDaq; // MCC DAQ Universal Library 6.73 from https://www.mccdaq.com/Software-Downloads.
-using static TestLibrary.Switching.RelayForms;
-using static TestLibrary.Switching.USB_ERB24;
+using static ABT.Switching.RelayForms;
 
-namespace TestLibrary.Switching {
+namespace ABT.Switching {
     public static class USB_ERB24 {
         // TODO: Convert the UE24 class to a Singleton, like the USB_TO_GPIO class?
         // TODO: Convert internal methods to private ones, after fully debugged/tested.

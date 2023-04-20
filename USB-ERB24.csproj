@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <RootNamespace>USB_ERB24</RootNamespace>
+    <RootNamespace>ABT.Switching</RootNamespace>
     <OutputType>Library</OutputType>
     <SignAssembly>False</SignAssembly>
   </PropertyGroup>
