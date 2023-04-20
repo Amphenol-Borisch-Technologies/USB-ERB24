@@ -10,8 +10,8 @@ C:\Users\phill\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.csproj.CoreCompi
 C:\Users\phill\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.csproj.CopyComplete
 C:\Users\phill\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.dll
 C:\Users\phill\Source\Repos\USB-ERB24\obj\Debug\net48\USB-ERB24.pdb
-C:\Users\phils\source\repos\USB-ERB24\bin\Debug\net48\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
 C:\Users\phils\source\repos\USB-ERB24\bin\Debug\net48\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Users\phils\source\repos\USB-ERB24\bin\Debug\net48\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
 C:\Users\phils\source\repos\USB-ERB24\bin\Debug\net48\Microsoft.TestPlatform.AdapterUtilities.dll
 C:\Users\phils\source\repos\USB-ERB24\bin\Debug\net48\USB-ERB24.dll
 C:\Users\phils\source\repos\USB-ERB24\bin\Debug\net48\USB-ERB24.pdb
