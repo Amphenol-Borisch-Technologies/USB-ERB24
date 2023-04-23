@@ -6,10 +6,8 @@ using System.Linq;
 using MccDaq; // MCC DAQ Universal Library 6.73 from https://www.mccdaq.com/Software-Downloads.
 using static ABT.TestSpace.Switching.RelayForms;
 
-namespace ABT.TestSpace.Switching
-{
-    public static class USB_ERB24
-    {
+namespace ABT.TestSpace.Switching {
+    public static class USB_ERB24 {
         // TODO: Convert the UE24 class to a Singleton, like the USB_TO_GPIO class?
         // TODO: Convert internal methods to private ones, after fully debugged/tested.
         //  - If there are more than one USB-ERB24s in the test system, make the UE24 Singleton class a Dictionary of USB-ERB24s, rather than just one USB-ERB24.
@@ -45,50 +43,43 @@ namespace ABT.TestSpace.Switching
         #region Is/Are
         public static bool Is(UE24 UE24, R R, C C) { return Get(UE24, R) == C; }
 
-        public static bool Are(UE24 UE24, HashSet<R> Rs, C C)
-        {
+        public static bool Are(UE24 UE24, HashSet<R> Rs, C C) {
             Dictionary<R, C> RεC = Rs.ToDictionary(r => r, r => C);
             Dictionary<R, C> Are = Get(UE24, Rs);
             return RεC.Count == Are.Count && !RεC.Except(Are).Any();
         }
 
-        public static bool Are(UE24 UE24, Dictionary<R, C> RεC)
-        {
+        public static bool Are(UE24 UE24, Dictionary<R, C> RεC) {
             Dictionary<R, C> Are = Get(UE24, new HashSet<R>(RεC.Keys));
             return RεC.Count == Are.Count && !RεC.Except(Are).Any();
         }
 
-        public static bool Are(UE24 UE24, C C)
-        {
+        public static bool Are(UE24 UE24, C C) {
             Dictionary<R, C> Are = Get(UE24);
             bool areEqual = true;
             foreach (KeyValuePair<R, C> kvp in Are) areEqual &= kvp.Value == C;
             return areEqual;
         }
 
-        public static bool Are(HashSet<UE24> UE24s, C C)
-        {
+        public static bool Are(HashSet<UE24> UE24s, C C) {
             bool areEqual = true;
             foreach (UE24 UE24 in UE24s) areEqual &= Are(UE24, C);
             return areEqual;
         }
 
-        public static bool Are(HashSet<UE24> UE24s, HashSet<R> Rs, C C)
-        {
+        public static bool Are(HashSet<UE24> UE24s, HashSet<R> Rs, C C) {
             bool areEqual = true;
             foreach (UE24 UE24 in UE24s) areEqual &= Are(UE24, Rs, C);
             return areEqual;
         }
 
-        public static bool Are(Dictionary<UE24, Dictionary<R, C>> UE24εRεC)
-        {
+        public static bool Are(Dictionary<UE24, Dictionary<R, C>> UE24εRεC) {
             bool areEqual = true;
             foreach (KeyValuePair<UE24, Dictionary<R, C>> kvp in UE24εRεC) areEqual &= Are(kvp.Key, kvp.Value);
             return areEqual;
         }
 
-        public static bool Are(C C)
-        {
+        public static bool Are(C C) {
             bool areEqual = true;
             foreach (UE24 UE24 in Enum.GetValues(typeof(UE24))) areEqual &= Are(UE24, C);
             return areEqual;
@@ -96,23 +87,20 @@ namespace ABT.TestSpace.Switching
         #endregion Is/Are
 
         #region Get
-        public static C Get(UE24 UE24, R R)
-        {
+        public static C Get(UE24 UE24, R R) {
             MccBoard mccBoard = new MccBoard((int)UE24);
             ErrorInfo errorInfo = mccBoard.DBitIn(DigitalPortType.FirstPortA, (int)R, out DigitalLogicState digitalLogicState);
             ProcessErrorInfo(mccBoard, errorInfo);
             return digitalLogicState == DigitalLogicState.Low ? C.NC : C.NO;
         }
 
-        public static Dictionary<R, C> Get(UE24 UE24, HashSet<R> Rs)
-        {
+        public static Dictionary<R, C> Get(UE24 UE24, HashSet<R> Rs) {
             Dictionary<R, C> RεC = Get(UE24);
             foreach (R R in Rs) if (!RεC.ContainsKey(R)) RεC.Remove(R);
             return RεC;
         }
 
-        public static Dictionary<R, C> Get(UE24 UE24)
-        {
+        public static Dictionary<R, C> Get(UE24 UE24) {
             MccBoard mccBoard = new MccBoard((int)UE24);
             ushort[] bits = PortsRead(mccBoard);
             uint[] biggerBits = Array.ConvertAll(bits, delegate (ushort uInt16) { return (uint)uInt16; });
@@ -124,8 +112,7 @@ namespace ABT.TestSpace.Switching
             BitVector32 bitVector32 = new BitVector32((int)relayBits);
 
             R R; C C; Dictionary<R, C> RεC = new Dictionary<R, C>();
-            for (int i = 0; i < _ue24bitVector32Masks.Length; i++)
-            {
+            for (int i = 0; i < _ue24bitVector32Masks.Length; i++) {
                 R = (R)Enum.ToObject(typeof(R), i);
                 C = bitVector32[_ue24bitVector32Masks[i]] ? C.NO : C.NC;
                 RεC.Add(R, C);
@@ -133,34 +120,29 @@ namespace ABT.TestSpace.Switching
             return RεC;
         }
 
-        public static Dictionary<UE24, Dictionary<R, C>> Get(HashSet<UE24> UE24s)
-        {
+        public static Dictionary<UE24, Dictionary<R, C>> Get(HashSet<UE24> UE24s) {
             Dictionary<UE24, Dictionary<R, C>> UE24εRεC = Get();
             foreach (UE24 UE24 in UE24s) if (!UE24εRεC.ContainsKey(UE24)) UE24εRεC.Remove(UE24);
             return UE24εRεC;
         }
 
-        public static Dictionary<UE24, Dictionary<R, C>> Get(HashSet<UE24> UE24s, HashSet<R> Rs)
-        {
+        public static Dictionary<UE24, Dictionary<R, C>> Get(HashSet<UE24> UE24s, HashSet<R> Rs) {
             Dictionary<UE24, Dictionary<R, C>> UE24εRεC = new Dictionary<UE24, Dictionary<R, C>>();
             foreach (UE24 UE24 in UE24s) UE24εRεC.Add(UE24, Get(UE24, Rs));
             return UE24εRεC;
         }
 
-        public static Dictionary<UE24, Dictionary<R, C>> Get(Dictionary<UE24, R> UE24εR)
-        {
+        public static Dictionary<UE24, Dictionary<R, C>> Get(Dictionary<UE24, R> UE24εR) {
             Dictionary<UE24, Dictionary<R, C>> UE24εRεC = new Dictionary<UE24, Dictionary<R, C>>();
             Dictionary<R, C> RεC = new Dictionary<R, C>();
-            foreach (KeyValuePair<UE24, R> kvp in UE24εR)
-            {
+            foreach (KeyValuePair<UE24, R> kvp in UE24εR) {
                 RεC.Add(kvp.Value, Get(kvp.Key, kvp.Value));
                 UE24εRεC.Add(kvp.Key, RεC);
             }
             return UE24εRεC;
         }
 
-        public static Dictionary<UE24, Dictionary<R, C>> Get()
-        {
+        public static Dictionary<UE24, Dictionary<R, C>> Get() {
             Dictionary<UE24, Dictionary<R, C>> UE24εRεC = new Dictionary<UE24, Dictionary<R, C>>();
             foreach (UE24 UE24 in Enum.GetValues(typeof(UE24))) UE24εRεC.Add(UE24, Get(UE24));
             return UE24εRεC;
@@ -168,8 +150,7 @@ namespace ABT.TestSpace.Switching
         #endregion Get
 
         #region Set
-        public static void Set(UE24 UE24, R R, C C)
-        {
+        public static void Set(UE24 UE24, R R, C C) {
             MccBoard mccBoard = new MccBoard((int)UE24);
             ErrorInfo errorInfo = mccBoard.DBitOut(DigitalPortType.FirstPortA, (int)R, C is C.NC ? DigitalLogicState.Low : DigitalLogicState.High);
             ProcessErrorInfo(mccBoard, errorInfo);
@@ -177,14 +158,12 @@ namespace ABT.TestSpace.Switching
 
         public static void Set(UE24 UE24, HashSet<R> Rs, C C) { Set(UE24, Rs.ToDictionary(r => r, r => C)); }
 
-        public static void Set(UE24 UE24, Dictionary<R, C> RεC)
-        {
+        public static void Set(UE24 UE24, Dictionary<R, C> RεC) {
             uint bit;
             uint bits0 = 0x0000_0000;
             uint bits1 = 0x0000_0000;
 
-            foreach (KeyValuePair<R, C> kvp in RεC)
-            {
+            foreach (KeyValuePair<R, C> kvp in RεC) {
                 bit = (uint)1 << (byte)kvp.Key;
                 if (kvp.Value == C.NC) bits0 |= bit; // Sets a 1 in each bit0 bit corresponding to NC state in RεC.
                 else bits1 |= bit;                   // Sets a 1 in each bit1 bit corresponding to NO state in RεC.
@@ -212,8 +191,7 @@ namespace ABT.TestSpace.Switching
             PortsWrite(mccBoard, ports);
         }
 
-        public static void Set(UE24 UE24, C C)
-        {
+        public static void Set(UE24 UE24, C C) {
             Dictionary<R, C> RεC = new Dictionary<R, C>();
             foreach (R R in Enum.GetValues(typeof(R))) RεC.Add(R, C);
             Set(UE24, RεC);
@@ -229,15 +207,13 @@ namespace ABT.TestSpace.Switching
         #endregion Set
 
         #region private methods
-        internal static ushort PortRead(MccBoard mccBoard, DigitalPortType digitalPortType)
-        {
+        internal static ushort PortRead(MccBoard mccBoard, DigitalPortType digitalPortType) {
             ErrorInfo errorInfo = mccBoard.DIn(digitalPortType, out ushort dataValue);
             ProcessErrorInfo(mccBoard, errorInfo);
             return dataValue;
         }
 
-        internal static ushort[] PortsRead(MccBoard mccBoard)
-        {
+        internal static ushort[] PortsRead(MccBoard mccBoard) {
             return new ushort[] {
                 PortRead(mccBoard, DigitalPortType.FirstPortA),
                 PortRead(mccBoard, DigitalPortType.FirstPortB),
@@ -246,24 +222,20 @@ namespace ABT.TestSpace.Switching
             };
         }
 
-        internal static void PortWrite(MccBoard mccBoard, DigitalPortType digitalPortType, ushort dataValue)
-        {
+        internal static void PortWrite(MccBoard mccBoard, DigitalPortType digitalPortType, ushort dataValue) {
             ErrorInfo errorInfo = mccBoard.DOut(digitalPortType, dataValue);
             ProcessErrorInfo(mccBoard, errorInfo);
         }
 
-        internal static void PortsWrite(MccBoard mccBoard, ushort[] ports)
-        {
+        internal static void PortsWrite(MccBoard mccBoard, ushort[] ports) {
             PortWrite(mccBoard, DigitalPortType.FirstPortA, ports[(int)PORTS.A]);
             PortWrite(mccBoard, DigitalPortType.FirstPortB, ports[(int)PORTS.B]);
             PortWrite(mccBoard, DigitalPortType.FirstPortCL, ports[(int)PORTS.CL]);
             PortWrite(mccBoard, DigitalPortType.FirstPortCH, ports[(int)PORTS.CH]);
         }
 
-        internal static DigitalPortType GetPort(R R)
-        {
-            switch (R)
-            {
+        internal static DigitalPortType GetPort(R R) {
+            switch (R) {
                 case R r when R.C01 <= r && r <= R.C08: return DigitalPortType.FirstPortA;
                 case R r when R.C09 <= r && r <= R.C16: return DigitalPortType.FirstPortB;
                 case R r when R.C17 <= r && r <= R.C20: return DigitalPortType.FirstPortCL;
@@ -272,11 +244,9 @@ namespace ABT.TestSpace.Switching
             }
         }
 
-        internal static void ProcessErrorInfo(MccBoard mccBoard, ErrorInfo errorInfo)
-        {
+        internal static void ProcessErrorInfo(MccBoard mccBoard, ErrorInfo errorInfo) {
             // Transform C style error-checking to .Net style exceptioning.
-            if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors)
-            {
+            if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) {
                 throw new InvalidOperationException(
                 $"{Environment.NewLine}" +
                 $"MccBoard BoardNum   : {mccBoard.BoardNum}.{Environment.NewLine}" +
@@ -287,8 +257,7 @@ namespace ABT.TestSpace.Switching
             }
         }
 
-        internal static int[] GetUE24BitVector32Masks()
-        {
+        internal static int[] GetUE24BitVector32Masks() {
             int ue24RelayCount = Enum.GetValues(typeof(R)).Length;
             Debug.Assert(ue24RelayCount == 24);
             int[] ue24BitVector32Masks = new int[ue24RelayCount];

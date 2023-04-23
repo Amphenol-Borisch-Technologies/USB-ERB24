@@ -1,7 +1,5 @@
-﻿namespace ABT.TestSpace.Switching
-{
-    public static class RelayForms
-    {
+﻿namespace ABT.TestSpace.Switching {
+    public static class RelayForms {
         // https://forum.digikey.com/t/understanding-form-a-form-b-form-c-contact-configuration/811
 
         public enum A { NO, C }
