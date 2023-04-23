@@ -8,8 +8,6 @@ using static ABT.TestSpace.Switching.RelayForms;
 
 namespace ABT.TestSpace.Switching {
     public static class USB_ERB24 {
-        // TODO: Convert the UE24 class to a Singleton, like the USB_TO_GPIO class?
-        // TODO: Convert internal methods to private ones, after fully debugged/tested.
         //  - If there are more than one USB-ERB24s in the test system, make the UE24 Singleton class a Dictionary of USB-ERB24s, rather than just one USB-ERB24.
         //  - Each USB-ERB24 in the Singleton's Dictionary can be accessed by it's UE24 enum; UE24.S01, UE24.S02...UE24.Snn, for UE24 Singletons 01, 02...nn.
         // NOTE: This class assumes all USB-ERB24 relays are configured for Non-Inverting Logic & Pull-Down/de-energized at power-up.
@@ -61,6 +59,7 @@ namespace ABT.TestSpace.Switching {
             return areEqual;
         }
 
+        // Below 3 methods mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE24 wired identically to test 1 UUT.
         public static bool Are(HashSet<UE24> UE24s, C C) {
             bool areEqual = true;
             foreach (UE24 UE24 in UE24s) areEqual &= Are(UE24, C);
@@ -120,6 +119,7 @@ namespace ABT.TestSpace.Switching {
             return RεC;
         }
 
+        // Below 3 methods mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE24 wired identically to test 1 UUT.
         public static Dictionary<UE24, Dictionary<R, C>> Get(HashSet<UE24> UE24s) {
             Dictionary<UE24, Dictionary<R, C>> UE24εRεC = Get();
             foreach (UE24 UE24 in UE24s) if (!UE24εRεC.ContainsKey(UE24)) UE24εRεC.Remove(UE24);
@@ -197,6 +197,7 @@ namespace ABT.TestSpace.Switching {
             Set(UE24, RεC);
         }
 
+        // Below 3 methods mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE24 wired identically to test 1 UUT.
         public static void Set(HashSet<UE24> UE24s, C C) { foreach (UE24 UE24 in UE24s) { Set(UE24, C); } }
 
         public static void Set(HashSet<UE24> UE24s, HashSet<R> Rs, C C) { foreach (UE24 UE24 in UE24s) Set(UE24, Rs, C); }

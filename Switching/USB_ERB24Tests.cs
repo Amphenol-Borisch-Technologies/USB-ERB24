@@ -11,7 +11,6 @@ namespace ABT.TestSpace.Switching {
     [TestClass()]
     public class USB_ERB24_Tests {
         // TODO: Add tests for class' USB_ERB24 3 public methods that aren't tested yet.
-        // TODO: Comment tests for class' USB_ERB24 internal methods after they're converted to private methods.
         private static readonly ushort[] ports0x00 = { 0x0000, 0x0000, 0x0000, 0x0000 };
         private static readonly ushort[] ports0xFF = { 0x00FF, 0x00FF, 0x000F, 0x000F };
         private static readonly ushort[] ports0xAA = { 0x00AA, 0x00AA, 0x000A, 0x000A };
