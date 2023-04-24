@@ -106,8 +106,8 @@ namespace ABT.TestSpace.Switching {
             UInt32 relayBits = 0x0000;
             relayBits |= biggerBits[(UInt32)PORTS.CH] << 00;
             relayBits |= biggerBits[(UInt32)PORTS.CL] << 04;
-            relayBits |= biggerBits[(UInt32)PORTS.B] << 08;
-            relayBits |= biggerBits[(UInt32)PORTS.A] << 16;
+            relayBits |= biggerBits[(UInt32)PORTS.B]  << 08;
+            relayBits |= biggerBits[(UInt32)PORTS.A]  << 16;
             BitVector32 bitVector32 = new BitVector32((Int32)relayBits);
 
             R R; C C; Dictionary<R, C> RεC = new Dictionary<R, C>();
