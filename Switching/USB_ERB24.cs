@@ -165,8 +165,8 @@ namespace ABT.TestSpace.Switching {
             //      - Relays that were NC remain NC.
             //      - Relays that were NO remain NO.
             UInt32 relayBit;
-            UInt32 bits_NC = 0xFFFF_FFFF; // bits_NC utilizes Boolean And logic.
-            UInt32 bits_NO = 0x0000_0000; // bits_NO utilizes Boolean Or logic.
+            UInt32 bits_NC = 0xFFFF_FFFF; // bits_NC utilize Boolean And logic.
+            UInt32 bits_NO = 0x0000_0000; // bits_NO utilize Boolean Or logic.
 
             foreach (KeyValuePair<R, C> kvp in RεC) {
                 relayBit = (UInt32)1 << (Byte)kvp.Key;
