@@ -100,6 +100,22 @@ namespace ABT.TestSpace.Switching {
         }
 
         public static Dictionary<R, C> Get(UE24 UE24) {
+            // Obviously, can utilize MccBoard.DBitIn to read individual bits, instead of MccBoard.DIn to read multiple bits:
+            //  - Thought was that DOut will read the bits as fast as possible, at least moreso than DBitOut.
+            //    - Plus, figured MCC wouldn't provide the DOut/DIn functions unless they were useful.
+            // - If preferred, below /*,*/commented code can replace the entirety of this method.
+            MccBoard mccBoard = new MccBoard((Int32)UE24);  ErrorInfo errorInfo;  DigitalLogicState digitalLogicState;
+            R R;  C C;  Dictionary<R, C> RεC = new Dictionary<R, C>();
+            for (Int32 i = 0; i < Enum.GetValues(typeof(R)).Length; i++) {
+                errorInfo = mccBoard.DBitIn(DigitalPortType.FirstPortA, i, out digitalLogicState);
+                ProcessErrorInfo (mccBoard, errorInfo);
+                R = (R)Enum.ToObject(typeof(R), i);
+                C = digitalLogicState == DigitalLogicState.Low ? C.NC : C.NO;
+                RεC.Add(R, C);
+            }
+            return RεC;
+            
+            /*
             MccBoard mccBoard = new MccBoard((Int32)UE24);
             UInt16[] bits = PortsRead(mccBoard);
             UInt32[] biggerBits = Array.ConvertAll(bits, delegate (UInt16 uInt16) { return (UInt32)uInt16; });
@@ -117,6 +133,7 @@ namespace ABT.TestSpace.Switching {
                 RεC.Add(R, C);
             }
             return RεC;
+            */
         }
 
         // Below 3 methods mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE24 wired identically to test 1 UUT.
@@ -164,6 +181,23 @@ namespace ABT.TestSpace.Switching {
             //  - Relay states R.C03, R.C04...R.C24 remain as they were:
             //      - Relays that were NC remain NC.
             //      - Relays that were NO remain NO.
+            //
+            // Obviously, can utilize MccBoard.DBitOut to write individual bits, instead of MccBoard.DOut to write multiple bits:
+            //  - Thought was that DOut will write the bits as simultaneously as possible, at least moreso than DBitOut.
+            //    - Possibly useful if associated wires are connected through relays clustered in a single port.
+            //    - Connecting/disconnecting multiple stimuli as simultaneously as possible by clustering all in a specific port
+            //      could be beneficial, particularly if they're connected/disconnected while actively stimulated.
+            //    - Plus, figured MCC wouldn't provide the DOut/DIn functions unless they were useful.
+            // - If preferred, below /*,*/commented code can replace the entirety of this method.
+            
+            MccBoard mccBoard = new MccBoard((Int32)UE24);
+            ErrorInfo errorInfo;
+            foreach (KeyValuePair<R, C> kvp in RεC) {
+                errorInfo = mccBoard.DBitOut(DigitalPortType.FirstPortA, (Int32)kvp.Key, kvp.Value == C.NC ? DigitalLogicState.Low: DigitalLogicState.High);
+                ProcessErrorInfo(mccBoard, errorInfo);
+            }
+            
+            /*
             UInt32 relayBit;
             UInt32 bits_NC = 0xFFFF_FFFF; // bits_NC utilize Boolean And logic.
             UInt32 bits_NO = 0x0000_0000; // bits_NO utilize Boolean Or logic.
@@ -195,6 +229,7 @@ namespace ABT.TestSpace.Switching {
             portStates[(Int32)PORTS.CH] |= (UInt16)bv32_NO[sectionPortCH];
 
             PortsWrite(mccBoard, portStates);
+            */
         }
 
         public static void Set(UE24 UE24, C C) {

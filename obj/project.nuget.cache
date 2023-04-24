@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "bsI0+PC15oGayTxIj7S0dzQp06bwccnNUGR7AR5IhGqcdhwM4Lr7XSFiVf3jJYMXu88zzPPRTJfHCsl24kfwRQ==",
+  "dgSpecHash": "Esa5v/FjYwqsVMxnM3OqhqrJpukOnpYetflQQHOz2ND6zQg2/mPuvzYKCRA0+S+LiXFs0JRiMsa8zaFSlUSQGg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\phils\\source\\repos\\USB-ERB24\\USB-ERB24.csproj",
+  "projectFilePath": "C:\\Users\\phill\\Source\\Repos\\USB-ERB24\\USB-ERB24.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\phils\\.nuget\\packages\\mstest.testadapter\\3.0.2\\mstest.testadapter.3.0.2.nupkg.sha512",
-    "C:\\Users\\phils\\.nuget\\packages\\mstest.testframework\\3.0.2\\mstest.testframework.3.0.2.nupkg.sha512"
+    "C:\\Users\\phill\\.nuget\\packages\\mstest.testadapter\\3.0.2\\mstest.testadapter.3.0.2.nupkg.sha512",
+    "C:\\Users\\phill\\.nuget\\packages\\mstest.testframework\\3.0.2\\mstest.testframework.3.0.2.nupkg.sha512"
   ],
   "logs": []
 }
