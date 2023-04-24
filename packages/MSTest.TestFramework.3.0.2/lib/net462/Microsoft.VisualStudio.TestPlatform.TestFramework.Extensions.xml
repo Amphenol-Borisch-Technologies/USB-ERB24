@@ -298,7 +298,7 @@
             <summary>
             returns the hash code of the target object.
             </summary>
-            <returns>int representing hashcode of the target object.</returns>
+            <returns>Int32 representing hashcode of the target object.</returns>
         </member>
         <member name="M:Microsoft.VisualStudio.TestTools.UnitTesting.PrivateObject.Equals(System.Object)">
             <summary>
@@ -958,7 +958,7 @@
             <param name="paramArrayType2">>Parameter array type.</param>
             <param name="types">Types to search in.</param>
             <param name="args">Args.</param>
-            <returns>An int representing the match.</returns>
+            <returns>An Int32 representing the match.</returns>
         </member>
         <member name="M:Microsoft.VisualStudio.TestTools.UnitTesting.RuntimeTypeHelper.FindMostSpecific(System.Reflection.ParameterInfo[],System.Int32[],System.Type,System.Reflection.ParameterInfo[],System.Int32[],System.Type,System.Type[],System.Object[])">
             <summary>
@@ -972,7 +972,7 @@
             <param name="paramArrayType2">>Parameter array type.</param>
             <param name="types">Types to search in.</param>
             <param name="args">Args.</param>
-            <returns>An int representing the match.</returns>
+            <returns>An Int32 representing the match.</returns>
         </member>
         <member name="M:Microsoft.VisualStudio.TestTools.UnitTesting.RuntimeTypeHelper.FindMostSpecificType(System.Type,System.Type,System.Type)">
             <summary>
@@ -981,7 +981,7 @@
             <param name="c1">Type 1.</param>
             <param name="c2">Type 2.</param>
             <param name="t">The defining type.</param>
-            <returns>An int representing the match.</returns>
+            <returns>An Int32 representing the match.</returns>
         </member>
         <member name="T:Microsoft.VisualStudio.TestTools.UnitTesting.TestContext">
             <summary>

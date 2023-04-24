@@ -11,18 +11,18 @@ namespace ABT.TestSpace.Switching {
     [TestClass()]
     public class USB_ERB24_Tests {
         // TODO: Add tests for class' USB_ERB24 3 public methods that aren't tested yet.
-        private static readonly ushort[] ports0x00 = { 0x0000, 0x0000, 0x0000, 0x0000 };
-        private static readonly ushort[] ports0xFF = { 0x00FF, 0x00FF, 0x000F, 0x000F };
-        private static readonly ushort[] ports0xAA = { 0x00AA, 0x00AA, 0x000A, 0x000A };
-        private static readonly ushort[] ports0x55 = { 0x0055, 0x0055, 0x0005, 0x0005 };
+        private static readonly UInt16[] ports0x00 = { 0x0000, 0x0000, 0x0000, 0x0000 };
+        private static readonly UInt16[] ports0xFF = { 0x00FF, 0x00FF, 0x000F, 0x000F };
+        private static readonly UInt16[] ports0xAA = { 0x00AA, 0x00AA, 0x000A, 0x000A };
+        private static readonly UInt16[] ports0x55 = { 0x0055, 0x0055, 0x0005, 0x0005 };
 
-        private static IEnumerable<object[]> GetRs { get { return new[] { new object[] { GetRHashSet() } }; } }
+        private static IEnumerable<Object[]> GetRs { get { return new[] { new Object[] { GetRHashSet() } }; } }
 
-        private static IEnumerable<object[]> GetRεCs { get { return new[] { new object[] { GetDictionaryRεC_NC(), GetDictionaryRεC_NO() } }; } }
+        private static IEnumerable<Object[]> GetRεCs { get { return new[] { new Object[] { GetDictionaryRεC_NC(), GetDictionaryRεC_NO() } }; } }
 
-        private static IEnumerable<object[]> GetUE24s { get { return new[] { new object[] { GetUE24HashSet() } }; } }
+        private static IEnumerable<Object[]> GetUE24s { get { return new[] { new Object[] { GetUE24HashSet() } }; } }
 
-        private static IEnumerable<object[]> GetUE24s_Rs { get { return new[] { new object[] { GetUE24HashSet(), GetRHashSet() } }; } }
+        private static IEnumerable<Object[]> GetUE24s_Rs { get { return new[] { new Object[] { GetUE24HashSet(), GetRHashSet() } }; } }
 
         private static void ConfirmRs(UE24 UE24, C C) {
             DialogResult dr = MessageBox.Show(
@@ -74,7 +74,7 @@ namespace ABT.TestSpace.Switching {
             return Rs;
         }
 
-        private static MccBoard GetMccBoard(UE24 UE24) { return new MccBoard((int)UE24); }
+        private static MccBoard GetMccBoard(UE24 UE24) { return new MccBoard((Int32)UE24); }
 
         private static HashSet<UE24> GetUE24HashSet() {
             HashSet<UE24> UE24s = new HashSet<UE24>();
@@ -84,46 +84,46 @@ namespace ABT.TestSpace.Switching {
 
         private static void ProcessError(ErrorInfo errorInfo) { if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) throw new InvalidOperationException(); }
 
-        private static bool ReadWritPort(MccBoard mccBoard, ErrorInfo errorInfo, DigitalPortType digitalPortType, ushort writ) {
+        private static Boolean ReadWritPort(MccBoard mccBoard, ErrorInfo errorInfo, DigitalPortType digitalPortType, UInt16 writ) {
             PortWrite(mccBoard, digitalPortType, writ);
-            errorInfo = mccBoard.DIn(digitalPortType, out ushort read);
+            errorInfo = mccBoard.DIn(digitalPortType, out UInt16 read);
             ProcessError(errorInfo);
             Console.WriteLine($"writ: {writ,-3}; read: {read,-3}");
             return writ == read;
         }
 
-        private static bool ReadWritPorts(MccBoard mccBoard, ushort[] writPorts) {
+        private static Boolean ReadWritPorts(MccBoard mccBoard, UInt16[] writPorts) {
             ErrorInfo errorInfo = new ErrorInfo();
-            bool allPassed = true;
-            allPassed &= ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortA, writPorts[(int)PORTS.A]);
-            allPassed &= ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortB, writPorts[(int)PORTS.B]);
-            allPassed &= ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortCL, writPorts[(int)PORTS.CL]);
-            allPassed &= ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortCH, writPorts[(int)PORTS.CH]);
-            ushort[] readPorts = PortsRead(mccBoard);
-            for (int i = 0; i < readPorts.Length; i++) {
+            Boolean allPassed = true;
+            allPassed &= ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortA, writPorts[(Int32)PORTS.A]);
+            allPassed &= ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortB, writPorts[(Int32)PORTS.B]);
+            allPassed &= ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortCL, writPorts[(Int32)PORTS.CL]);
+            allPassed &= ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortCH, writPorts[(Int32)PORTS.CH]);
+            UInt16[] readPorts = PortsRead(mccBoard);
+            for (Int32 i = 0; i < readPorts.Length; i++) {
                 allPassed &= writPorts[i] == readPorts[i];
                 Console.WriteLine($"Read Ports[{i}] '{readPorts[i]}', Writ Ports[{i}] '{writPorts[i]}.'");
             }
             return allPassed;
         }
 
-        private static bool WriteReadPort(MccBoard mccBoard, ErrorInfo errorInfo, DigitalPortType digitalPortType, ushort writ) {
+        private static Boolean WriteReadPort(MccBoard mccBoard, ErrorInfo errorInfo, DigitalPortType digitalPortType, UInt16 writ) {
             errorInfo = mccBoard.DOut(digitalPortType, writ);
             ProcessError(errorInfo);
-            uint read = PortRead(mccBoard, digitalPortType);
+            UInt32 read = PortRead(mccBoard, digitalPortType);
             Console.WriteLine($"writ: {writ,-3}; read: {read,-3}");
             return writ == read;
         }
 
-        private static bool WriteReadPorts(MccBoard mccBoard, ushort[] writPorts) {
+        private static Boolean WriteReadPorts(MccBoard mccBoard, UInt16[] writPorts) {
             ErrorInfo errorInfo = new ErrorInfo();
-            bool allPassed = true;
-            allPassed &= WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortA, writPorts[(int)PORTS.A]);
-            allPassed &= WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortB, writPorts[(int)PORTS.B]);
-            allPassed &= WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortCL, writPorts[(int)PORTS.CL]);
-            allPassed &= WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortCH, writPorts[(int)PORTS.CH]);
-            ushort[] readPorts = PortsRead(mccBoard);
-            for (int i = 0; i < readPorts.Length; i++) {
+            Boolean allPassed = true;
+            allPassed &= WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortA, writPorts[(Int32)PORTS.A]);
+            allPassed &= WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortB, writPorts[(Int32)PORTS.B]);
+            allPassed &= WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortCL, writPorts[(Int32)PORTS.CL]);
+            allPassed &= WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortCH, writPorts[(Int32)PORTS.CH]);
+            UInt16[] readPorts = PortsRead(mccBoard);
+            for (Int32 i = 0; i < readPorts.Length; i++) {
                 allPassed &= writPorts[i] == readPorts[i];
                 Console.WriteLine($"Read Ports[{i}] '{readPorts[i]}', Writ Ports[{i}] '{writPorts[i]}.'");
             }
@@ -132,43 +132,43 @@ namespace ABT.TestSpace.Switching {
         #region Declarations, tested in case they change & impact other TestExecutive.Switching methods and/or other MSTest tests.
         [TestMethod()]
         [DynamicData(nameof(GetUE24s))]
-        public void UE24s_Test(HashSet<UE24> UE24s) { for (int i = 0; i < UE24s.Count; i++) Assert.IsTrue(UE24s.Contains((UE24)i)); }
+        public void UE24s_Test(HashSet<UE24> UE24s) { for (Int32 i = 0; i < UE24s.Count; i++) Assert.IsTrue(UE24s.Contains((UE24)i)); }
 
         [TestMethod()]
         public void PORTS_Test() {
-            Assert.AreEqual((int)PORTS.A, 0);
-            Assert.AreEqual((int)PORTS.B, 1);
-            Assert.AreEqual((int)PORTS.CL, 2);
-            Assert.AreEqual((int)PORTS.CH, 3);
+            Assert.AreEqual((Int32)PORTS.A, 0);
+            Assert.AreEqual((Int32)PORTS.B, 1);
+            Assert.AreEqual((Int32)PORTS.CL, 2);
+            Assert.AreEqual((Int32)PORTS.CH, 3);
             Assert.AreEqual(Enum.GetNames(typeof(PORTS)).Length, 4);
         }
 
         [TestMethod()]
         public void Rs_Test() {
-            Assert.AreEqual((int)R.C01, 00);
-            Assert.AreEqual((int)R.C02, 01);
-            Assert.AreEqual((int)R.C03, 02);
-            Assert.AreEqual((int)R.C04, 03);
-            Assert.AreEqual((int)R.C05, 04);
-            Assert.AreEqual((int)R.C06, 05);
-            Assert.AreEqual((int)R.C07, 06);
-            Assert.AreEqual((int)R.C08, 07);
-            Assert.AreEqual((int)R.C09, 08);
-            Assert.AreEqual((int)R.C10, 09);
-            Assert.AreEqual((int)R.C11, 10);
-            Assert.AreEqual((int)R.C12, 11);
-            Assert.AreEqual((int)R.C13, 12);
-            Assert.AreEqual((int)R.C14, 13);
-            Assert.AreEqual((int)R.C15, 14);
-            Assert.AreEqual((int)R.C16, 15);
-            Assert.AreEqual((int)R.C17, 16);
-            Assert.AreEqual((int)R.C18, 17);
-            Assert.AreEqual((int)R.C19, 18);
-            Assert.AreEqual((int)R.C20, 19);
-            Assert.AreEqual((int)R.C21, 20);
-            Assert.AreEqual((int)R.C22, 21);
-            Assert.AreEqual((int)R.C23, 22);
-            Assert.AreEqual((int)R.C24, 23);
+            Assert.AreEqual((Int32)R.C01, 00);
+            Assert.AreEqual((Int32)R.C02, 01);
+            Assert.AreEqual((Int32)R.C03, 02);
+            Assert.AreEqual((Int32)R.C04, 03);
+            Assert.AreEqual((Int32)R.C05, 04);
+            Assert.AreEqual((Int32)R.C06, 05);
+            Assert.AreEqual((Int32)R.C07, 06);
+            Assert.AreEqual((Int32)R.C08, 07);
+            Assert.AreEqual((Int32)R.C09, 08);
+            Assert.AreEqual((Int32)R.C10, 09);
+            Assert.AreEqual((Int32)R.C11, 10);
+            Assert.AreEqual((Int32)R.C12, 11);
+            Assert.AreEqual((Int32)R.C13, 12);
+            Assert.AreEqual((Int32)R.C14, 13);
+            Assert.AreEqual((Int32)R.C15, 14);
+            Assert.AreEqual((Int32)R.C16, 15);
+            Assert.AreEqual((Int32)R.C17, 16);
+            Assert.AreEqual((Int32)R.C18, 17);
+            Assert.AreEqual((Int32)R.C19, 18);
+            Assert.AreEqual((Int32)R.C20, 19);
+            Assert.AreEqual((Int32)R.C21, 20);
+            Assert.AreEqual((Int32)R.C22, 21);
+            Assert.AreEqual((Int32)R.C23, 22);
+            Assert.AreEqual((Int32)R.C24, 23);
             Assert.AreEqual(Enum.GetNames(typeof(R)).Length, 24);
         }
         #endregion Declarations, tested in case they change & impact other TestExecutive.Switching methods and/or other MSTest tests.
@@ -255,13 +255,13 @@ namespace ABT.TestSpace.Switching {
         public void Are_Test(HashSet<UE24> UE24s) {
             foreach (UE24 UE24 in UE24s) {
                 PortsWrite(GetMccBoard(UE24), ports0x00);
-                bool arelow = true;
+                Boolean arelow = true;
                 arelow &= Are(UE24, C.NC);
                 Assert.IsTrue(arelow);
             }
             foreach (UE24 UE24 in UE24s) {
                 PortsWrite(GetMccBoard(UE24), ports0xFF);
-                bool areHIGH = true;
+                Boolean areHIGH = true;
                 areHIGH &= Are(UE24, C.NO);
                 Assert.IsTrue(areHIGH);
             }
@@ -320,7 +320,7 @@ namespace ABT.TestSpace.Switching {
 
         [TestMethod()]
         public void SetUE24_C_Test() {
-            for (int i = 0; i < 4; i++) {
+            for (Int32 i = 0; i < 4; i++) {
                 Set(UE24.E01, C.NO);
                 Set(UE24.E01, C.NC);
             }
@@ -333,19 +333,32 @@ namespace ABT.TestSpace.Switching {
         [TestMethod()]
         public void SetUE24_RεC_Test() {
             Set(UE24.E01, GetDictionaryRεC_NC());
+            UInt16[] ports = PortsRead(GetMccBoard(UE24.E01));
+            for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
             Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
 
             Set(UE24.E01, GetDictionaryRεC_Ax());
-            Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
-
-            Set(UE24.E01, GetDictionaryRεC_NO());
-            Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
-
-            Set(UE24.E01, GetDictionaryRεC_AA());
+            ports = PortsRead(GetMccBoard(UE24.E01));
+            for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
             Assert.IsTrue(ports0xAA.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
 
-            Set(UE24.E01, GetDictionaryRεC_55());
-            Assert.IsTrue(ports0x55.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
+            Set(UE24.E01, GetDictionaryRεC_5x());
+            ports = PortsRead(GetMccBoard(UE24.E01));
+            for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
+            Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
+
+            Set(UE24.E01, new Dictionary<R, C>() {{R.C01, C.NC}, {R.C08, C.NC}, {R.C09, C.NC}, {R.C16, C.NC}, {R.C17, C.NC}, {R.C20, C.NC}, {R.C21, C.NC}, {R.C24, C.NC}});
+            ports = PortsRead(GetMccBoard(UE24.E01));
+            for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
+            Assert.AreEqual(ports[(Int32)PORTS.A],  0x7E);
+            Assert.AreEqual(ports[(Int32)PORTS.B],  0x7E);
+            Assert.AreEqual(ports[(Int32)PORTS.CL], 0x6);
+            Assert.AreEqual(ports[(Int32)PORTS.CH], 0x6);
+
+            Set(UE24.E01, new Dictionary<R, C>() {{R.C01, C.NO}, {R.C08, C.NO}, {R.C09, C.NO}, {R.C16, C.NO}, {R.C17, C.NO}, {R.C20, C.NO}, {R.C21, C.NO}, {R.C24, C.NO}});
+            ports = PortsRead(GetMccBoard(UE24.E01));
+            for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
+            Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
         }
 
         [TestMethod()]
@@ -356,12 +369,12 @@ namespace ABT.TestSpace.Switching {
             DigitalLogicState digitalLogicState;
             foreach (R R in Rs) {
                 Set(UE24.E01, R, C.NC);
-                errorInfo = mccBoard.DBitIn(DigitalPortType.FirstPortA, (int)R, out digitalLogicState);
+                errorInfo = mccBoard.DBitIn(DigitalPortType.FirstPortA, (Int32)R, out digitalLogicState);
                 ProcessErrorInfo(mccBoard, errorInfo);
                 Assert.AreEqual(digitalLogicState, DigitalLogicState.Low);
 
                 Set(UE24.E01, R, C.NO);
-                errorInfo = mccBoard.DBitIn(DigitalPortType.FirstPortA, (int)R, out digitalLogicState);
+                errorInfo = mccBoard.DBitIn(DigitalPortType.FirstPortA, (Int32)R, out digitalLogicState);
                 ProcessErrorInfo(mccBoard, errorInfo);
                 Assert.AreEqual(digitalLogicState, DigitalLogicState.High);
             }
@@ -423,14 +436,14 @@ namespace ABT.TestSpace.Switching {
         public void PortRead_Test() {
             MccBoard mccBoard = GetMccBoard(UE24.E01);
             ErrorInfo errorInfo = new ErrorInfo();
-            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortA, ports0x00[(int)PORTS.A]));
-            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortB, ports0x00[(int)PORTS.B]));
-            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortCL, ports0x00[(int)PORTS.CL]));
-            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortCH, ports0x00[(int)PORTS.CH]));
-            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortA, ports0xFF[(int)PORTS.A]));
-            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortB, ports0xFF[(int)PORTS.B]));
-            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortCL, ports0xFF[(int)PORTS.CL]));
-            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortCH, ports0xFF[(int)PORTS.CH]));
+            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortA, ports0x00[(Int32)PORTS.A]));
+            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortB, ports0x00[(Int32)PORTS.B]));
+            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortCL, ports0x00[(Int32)PORTS.CL]));
+            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortCH, ports0x00[(Int32)PORTS.CH]));
+            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortA, ports0xFF[(Int32)PORTS.A]));
+            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortB, ports0xFF[(Int32)PORTS.B]));
+            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortCL, ports0xFF[(Int32)PORTS.CL]));
+            Assert.IsTrue(WriteReadPort(mccBoard, errorInfo, DigitalPortType.FirstPortCH, ports0xFF[(Int32)PORTS.CH]));
         }
 
         [TestMethod()]
@@ -444,14 +457,14 @@ namespace ABT.TestSpace.Switching {
         public void PortWrite_Test() {
             MccBoard mccBoard = GetMccBoard(UE24.E01);
             ErrorInfo errorInfo = new ErrorInfo();
-            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortA, ports0x00[(int)PORTS.A]));
-            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortB, ports0x00[(int)PORTS.B]));
-            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortCL, ports0x00[(int)PORTS.CL]));
-            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortCH, ports0x00[(int)PORTS.CH]));
-            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortA, ports0xFF[(int)PORTS.A]));
-            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortB, ports0xFF[(int)PORTS.B]));
-            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortCL, ports0xFF[(int)PORTS.CL]));
-            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortCH, ports0xFF[(int)PORTS.CH]));
+            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortA, ports0x00[(Int32)PORTS.A]));
+            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortB, ports0x00[(Int32)PORTS.B]));
+            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortCL, ports0x00[(Int32)PORTS.CL]));
+            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortCH, ports0x00[(Int32)PORTS.CH]));
+            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortA, ports0xFF[(Int32)PORTS.A]));
+            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortB, ports0xFF[(Int32)PORTS.B]));
+            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortCL, ports0xFF[(Int32)PORTS.CL]));
+            Assert.IsTrue(ReadWritPort(mccBoard, errorInfo, DigitalPortType.FirstPortCH, ports0xFF[(Int32)PORTS.CH]));
         }
 
         [TestMethod()]
@@ -464,19 +477,19 @@ namespace ABT.TestSpace.Switching {
         [TestMethod()]
         public void GetPort_Test() {
             DigitalPortType dtp;
-            for (int bitNum = 0; bitNum < Enum.GetNames(typeof(R)).Length; bitNum++) {
+            for (Int32 bitNum = 0; bitNum < Enum.GetNames(typeof(R)).Length; bitNum++) {
                 dtp = GetPort((R)bitNum);
                 switch (bitNum) {
-                    case int b when 0 <= b && b <= 7:
+                    case Int32 b when 0 <= b && b <= 7:
                         Assert.AreEqual(dtp, DigitalPortType.FirstPortA);
                         break;
-                    case int b when 8 <= b && b <= 15:
+                    case Int32 b when 8 <= b && b <= 15:
                         Assert.AreEqual(dtp, DigitalPortType.FirstPortB);
                         break;
-                    case int b when 16 <= b && b <= 19:
+                    case Int32 b when 16 <= b && b <= 19:
                         Assert.AreEqual(dtp, DigitalPortType.FirstPortCL);
                         break;
-                    case int b when 20 <= b && b <= 23:
+                    case Int32 b when 20 <= b && b <= 23:
                         Assert.AreEqual(dtp, DigitalPortType.FirstPortCH);
                         break;
                 }
