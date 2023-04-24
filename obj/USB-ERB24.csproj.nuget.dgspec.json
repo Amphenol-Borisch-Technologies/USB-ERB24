@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\phill\\Source\\Repos\\USB-ERB24\\USB-ERB24.csproj": {}
+    "C:\\Users\\phill\\source\\repos\\USB-ERB24\\USB-ERB24.csproj": {}
   },
   "projects": {
-    "C:\\Users\\phill\\Source\\Repos\\USB-ERB24\\USB-ERB24.csproj": {
+    "C:\\Users\\phill\\source\\repos\\USB-ERB24\\USB-ERB24.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\phill\\Source\\Repos\\USB-ERB24\\USB-ERB24.csproj",
+        "projectUniqueName": "C:\\Users\\phill\\source\\repos\\USB-ERB24\\USB-ERB24.csproj",
         "projectName": "USB-ERB24",
-        "projectPath": "C:\\Users\\phill\\Source\\Repos\\USB-ERB24\\USB-ERB24.csproj",
+        "projectPath": "C:\\Users\\phill\\source\\repos\\USB-ERB24\\USB-ERB24.csproj",
         "packagesPath": "C:\\Users\\phill\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\phill\\Source\\Repos\\USB-ERB24\\obj\\",
+        "outputPath": "C:\\Users\\phill\\source\\repos\\USB-ERB24\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\phill\\AppData\\Roaming\\NuGet\\NuGet.Config",
