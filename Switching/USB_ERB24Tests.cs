@@ -36,7 +36,7 @@ namespace ABT.TestSpace.Switching {
 
         private static Dictionary<R, C> GetDictionaryRεC_NO() { return GetRHashSet().ToDictionary(r => r, r => C.NO); }
 
-        private static Dictionary<R, C> GetDictionaryRεC_AA() {
+        private static Dictionary<R, C> GetDictionaryRεC_NC_NO() {
             return new Dictionary<R, C>() {
                 {R.C01, C.NC}, {R.C02, C.NO}, {R.C03, C.NC}, {R.C04, C.NO}, {R.C05, C.NC}, {R.C06, C.NO}, {R.C07, C.NC}, {R.C08, C.NO},
                 {R.C09, C.NC}, {R.C10, C.NO}, {R.C11, C.NC}, {R.C12, C.NO}, {R.C13, C.NC}, {R.C14, C.NO}, {R.C15, C.NC}, {R.C16, C.NO},
@@ -44,7 +44,7 @@ namespace ABT.TestSpace.Switching {
             };
         }
 
-        private static Dictionary<R, C> GetDictionaryRεC_55() {
+        private static Dictionary<R, C> GetDictionaryRεC_NO_NC() {
             return new Dictionary<R, C>() {
                 {R.C01, C.NO}, {R.C02, C.NC}, {R.C03, C.NO}, {R.C04, C.NC}, {R.C05, C.NO}, {R.C06, C.NC}, {R.C07, C.NO}, {R.C08, C.NC},
                 {R.C09, C.NO}, {R.C10, C.NC}, {R.C11, C.NO}, {R.C12, C.NC}, {R.C13, C.NO}, {R.C14, C.NC}, {R.C15, C.NO}, {R.C16, C.NC},
@@ -52,7 +52,7 @@ namespace ABT.TestSpace.Switching {
             };
         }
 
-        private static Dictionary<R, C> GetDictionaryRεC_Ax() {
+        private static Dictionary<R, C> GetDictionaryRεC_X_NO() {
             return new Dictionary<R, C>() {
                 {R.C02, C.NO}, {R.C04, C.NO}, {R.C06, C.NO}, {R.C08, C.NO},
                 {R.C10, C.NO}, {R.C12, C.NO}, {R.C14, C.NO}, {R.C16, C.NO},
@@ -60,7 +60,7 @@ namespace ABT.TestSpace.Switching {
             };
         }
 
-        private static Dictionary<R, C> GetDictionaryRεC_5x() {
+        private static Dictionary<R, C> GetDictionaryRεC_NO_X() {
             return new Dictionary<R, C>() {
                 {R.C01, C.NO}, {R.C03, C.NO}, {R.C05, C.NO}, {R.C07, C.NO},
                 {R.C09, C.NO}, {R.C11, C.NO}, {R.C13, C.NO}, {R.C15, C.NO},
@@ -337,12 +337,12 @@ namespace ABT.TestSpace.Switching {
             for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
             Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
 
-            Set(UE24.E01, GetDictionaryRεC_Ax());
+            Set(UE24.E01, GetDictionaryRεC_X_NO());
             ports = PortsRead(GetMccBoard(UE24.E01));
             for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
             Assert.IsTrue(ports0xAA.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
 
-            Set(UE24.E01, GetDictionaryRεC_5x());
+            Set(UE24.E01, GetDictionaryRεC_NO_X());
             ports = PortsRead(GetMccBoard(UE24.E01));
             for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
             Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(GetMccBoard(UE24.E01))));
