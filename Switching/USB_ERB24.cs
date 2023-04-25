@@ -103,7 +103,7 @@ namespace ABT.TestSpace.Switching {
 
         public static Dictionary<R, C> Get(UE24 UE24) {
             // Obviously, can utilize MccBoard.DBitIn to read individual bits, instead of MccBoard.DIn to read multiple bits:
-            //  - Thought was that DOut will read the bits as fast as possible, at least moreso than DBitOut.
+            //  - Thought was that DOut will read the bits as fast as possible, at least more so than DBitOut.
             //    - Plus, figured MCC wouldn't provide the DOut/DIn functions unless they were useful.
             // - If preferred, below /*,*/commented code can replace the entirety of this method.
             /*
@@ -185,7 +185,7 @@ namespace ABT.TestSpace.Switching {
             //      - Relays that were NO remain NO.
             //
             // Obviously, can utilize MccBoard.DBitOut to write individual bits, instead of MccBoard.DOut to write multiple bits:
-            //  - Thought was that DOut will write the bits as simultaneously as possible, at least moreso than DBitOut.
+            //  - Thought was that DOut will write the bits as simultaneously as possible, at least more so than DBitOut.
             //    - Possibly useful if associated wires are connected through relays clustered in a single port.
             //    - Connecting/disconnecting multiple stimuli as simultaneously as possible by clustering all in a specific port
             //      could be beneficial, particularly if they're connected/disconnected while actively stimulated.
