@@ -103,9 +103,13 @@ namespace ABT.TestSpace.Switching {
 
         public static Dictionary<R, C> Get(UE24 UE24) {
             // Obviously, can utilize MccBoard.DBitIn to read individual bits, instead of MccBoard.DIn to read multiple bits:
-            //  - Thought was that DOut will read the bits as fast as possible, at least more so than DBitOut.
-            //    - Plus, figured MCC wouldn't provide the DOut/DIn functions unless they were useful.
-            // - If preferred, below /*,*/commented code can replace the entirety of this method.
+            // - But, the USB-ERB24's reads it's relay states by reading its internal 82C55's ports.
+            // - These ports appear to operate similarly to MccBoard's DIn function, that is, they read the 82C55's 
+            //   port bits simultaneously.
+            // - If correct, then utilizing MccBoard's DBitIn function could be very inefficient compared to
+            //   the DIn function, since DBitIn would have to perform similar bit-shifting/bit-setting functions as this method does,
+            //   once for each of the USB-ERB24's 24 relays, as opposed to 4 times for this method.
+            // - Regardless, if preferred, below /*,*/commented code can replace the entirety of this method.
             /*
             MccBoard mccBoard = new MccBoard((Int32)UE24);  ErrorInfo errorInfo;  DigitalLogicState digitalLogicState;
             R R;  C C;  Dictionary<R, C> RεC = new Dictionary<R, C>();
@@ -120,13 +124,13 @@ namespace ABT.TestSpace.Switching {
             */
 
             MccBoard mccBoard = new MccBoard((Int32)UE24);
-            UInt16[] bits = PortsRead(mccBoard);
-            UInt32[] biggerBits = Array.ConvertAll(bits, delegate (UInt16 uInt16) { return (UInt32)uInt16; });
+            UInt16[] portBits = PortsRead(mccBoard);
+            UInt32[] biggerPortBits = Array.ConvertAll(portBits, delegate (UInt16 uInt16) { return (UInt32)uInt16; });
             UInt32 relayBits = 0x0000;
-            relayBits |= biggerBits[(UInt32)PORTS.CH] << 00;
-            relayBits |= biggerBits[(UInt32)PORTS.CL] << 04;
-            relayBits |= biggerBits[(UInt32)PORTS.B]  << 08;
-            relayBits |= biggerBits[(UInt32)PORTS.A]  << 16;
+            relayBits |= biggerPortBits[(UInt32)PORTS.CH] << 00;
+            relayBits |= biggerPortBits[(UInt32)PORTS.CL] << 04;
+            relayBits |= biggerPortBits[(UInt32)PORTS.B]  << 08;
+            relayBits |= biggerPortBits[(UInt32)PORTS.A]  << 16;
             BitVector32 bitVector32 = new BitVector32((Int32)relayBits);
 
             R R; C C; Dictionary<R, C> RεC = new Dictionary<R, C>();
@@ -185,12 +189,14 @@ namespace ABT.TestSpace.Switching {
             //      - Relays that were NO remain NO.
             //
             // Obviously, can utilize MccBoard.DBitOut to write individual bits, instead of MccBoard.DOut to write multiple bits:
-            //  - Thought was that DOut will write the bits as simultaneously as possible, at least more so than DBitOut.
-            //    - Possibly useful if associated wires are connected through relays clustered in a single port.
-            //    - Connecting/disconnecting multiple stimuli as simultaneously as possible by clustering all in a specific port
-            //      could be beneficial, particularly if they're connected/disconnected while actively stimulated.
-            //    - Plus, figured MCC wouldn't provide the DOut/DIn functions unless they were useful.
-            // - If preferred, below /*,*/commented code can replace the entirety of this method.
+            // - But, the USB-ERB24's energizes/de-energizes it's relay by writing its internal 82C55's ports.
+            // - These ports appear to operate similarly to MccBoard's DOut function, that is, they write the 
+            //   entire port's bits simultaneously.
+            // - If correct, then utilizing MccBoard's DBitOut function could be very inefficient compared to
+            //   the DOut function, since it'd have to perform similar And/Or functions as this method does,
+            //   once for every call to DBitOut.
+            //  - Thought is that DOut will write the bits as simultaneously as possible, at least more so than DBitOut.
+            // - Regardless, if preferred, below /*,*/commented code can replace the entirety of this method.
             /*
             MccBoard mccBoard = new MccBoard((Int32)UE24);
             ErrorInfo errorInfo;
