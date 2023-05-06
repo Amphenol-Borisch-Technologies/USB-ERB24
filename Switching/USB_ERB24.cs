@@ -7,14 +7,9 @@ using MccDaq; // MCC DAQ Universal Library 6.73 from https://www.mccdaq.com/Soft
 using static ABT.TestSpace.Switching.RelayForms;
 
 namespace ABT.TestSpace.Switching {
-    public sealed class USB_ERB24 {
-        private static readonly USB_ERB24 _only = new USB_ERB24();
-        public static readonly MccBoard _mccBoard = new MccBoard((Int32)UE24.E01);
-        private static ErrorInfo _errorInfo = new ErrorInfo();
-        // Singleton pattern requires explicit static constructor to tell C# compiler not to mark type as beforefieldinit.
-        // https://csharpindepth.com/articles/singleton
-        private USB_ERB24() { }
-        public static USB_ERB24 Only { get { return _only; } }
+    public static class USB_ERB24 {
+        // TODO: Convert the USB_ERB24 class to a Singleton, like the USB_TO_GPIO class?
+        //  - Realize Singletons often considered "anti-patterns", but handy for objects that can only have 1 instance.
         //  - If there are more than one USB-ERB24s in the test system, make the UE24 Singleton class a Dictionary of USB-ERB24s, rather than just one USB-ERB24.
         //  - Each USB-ERB24 in the Singleton's Dictionary can be accessed by it's UE24 enum; UE24.S01, UE24.S02...UE24.Snn, for UE24 Singletons 01, 02...nn.
         // NOTE: This class assumes all USB-ERB24 relays are configured for Non-Inverting Logic & Pull-Down/de-energized at power-up.
@@ -94,8 +89,9 @@ namespace ABT.TestSpace.Switching {
 
         #region Get
         public static C Get(UE24 UE24, R R) {
-            _errorInfo =_mccBoard.DBitIn(DigitalPortType.FirstPortA, (Int32)R, out DigitalLogicState digitalLogicState);
-            ProcessErrorInfo();
+            MccBoard mccBoard = new MccBoard((Int32)UE24);
+            ErrorInfo errorInfo = mccBoard.DBitIn(DigitalPortType.FirstPortA, (Int32)R, out DigitalLogicState digitalLogicState);
+            ProcessErrorInfo(mccBoard, errorInfo);
             return digitalLogicState == DigitalLogicState.Low ? C.NC : C.NO;
         }
 
@@ -115,11 +111,11 @@ namespace ABT.TestSpace.Switching {
             //   once for each of the USB-ERB24's 24 relays, as opposed to 4 times for this method.
             // - Regardless, if preferred, below /*,*/commented code can replace the entirety of this method.
             /*
-            DigitalLogicState digitalLogicState;
+            MccBoard mccBoard = new MccBoard((Int32)UE24);  ErrorInfo errorInfo;  DigitalLogicState digitalLogicState;
             R R;  C C;  Dictionary<R, C> RεC = new Dictionary<R, C>();
             for (Int32 i = 0; i < Enum.GetValues(typeof(R)).Length; i++) {
-                _errorInfo = _mccBoard.DBitIn(DigitalPortType.FirstPortA, i, out digitalLogicState);
-                ProcessErrorInfo ();
+                errorInfo = mccBoard.DBitIn(DigitalPortType.FirstPortA, i, out digitalLogicState);
+                ProcessErrorInfo (mccBoard, errorInfo);
                 R = (R)Enum.ToObject(typeof(R), i);
                 C = digitalLogicState == DigitalLogicState.Low ? C.NC : C.NO;
                 RεC.Add(R, C);
@@ -127,7 +123,8 @@ namespace ABT.TestSpace.Switching {
             return RεC;
             */
 
-            UInt16[] portBits = PortsRead();
+            MccBoard mccBoard = new MccBoard((Int32)UE24);
+            UInt16[] portBits = PortsRead(mccBoard);
             UInt32[] biggerPortBits = Array.ConvertAll(portBits, delegate (UInt16 uInt16) { return (UInt32)uInt16; });
             UInt32 relayBits = 0x0000;
             relayBits |= biggerPortBits[(UInt32)PORTS.CH] << 00;
@@ -177,8 +174,9 @@ namespace ABT.TestSpace.Switching {
 
         #region Set
         public static void Set(UE24 UE24, R R, C C) {
-            _errorInfo = _mccBoard.DBitOut(DigitalPortType.FirstPortA, (Int32)R, C is C.NC ? DigitalLogicState.Low : DigitalLogicState.High);
-            ProcessErrorInfo();
+            MccBoard mccBoard = new MccBoard((Int32)UE24);
+            ErrorInfo errorInfo = mccBoard.DBitOut(DigitalPortType.FirstPortA, (Int32)R, C is C.NC ? DigitalLogicState.Low : DigitalLogicState.High);
+            ProcessErrorInfo(mccBoard, errorInfo);
         }
 
         public static void Set(UE24 UE24, HashSet<R> Rs, C C) { Set(UE24, Rs.ToDictionary(r => r, r => C)); }
@@ -200,9 +198,11 @@ namespace ABT.TestSpace.Switching {
             //  - Thought is that DOut will write the bits as simultaneously as possible, at least more so than DBitOut.
             // - Regardless, if preferred, below /*,*/commented code can replace the entirety of this method.
             /*
+            MccBoard mccBoard = new MccBoard((Int32)UE24);
+            ErrorInfo errorInfo;
             foreach (KeyValuePair<R, C> kvp in RεC) {
-                _errorInfo = _mccBoard.DBitOut(DigitalPortType.FirstPortA, (Int32)kvp.Key, kvp.Value == C.NC ? DigitalLogicState.Low: DigitalLogicState.High);
-                ProcessErrorInfo();
+                errorInfo = mccBoard.DBitOut(DigitalPortType.FirstPortA, (Int32)kvp.Key, kvp.Value == C.NC ? DigitalLogicState.Low: DigitalLogicState.High);
+                ProcessErrorInfo(mccBoard, errorInfo);
             }
             */
 
@@ -223,7 +223,8 @@ namespace ABT.TestSpace.Switching {
             BitVector32.Section sectionPortCL = BitVector32.CreateSection(0b1111, sectionPortB);
             BitVector32.Section sectionPortCH = BitVector32.CreateSection(0b1111, sectionPortCL);
 
-            UInt16[] portStates = PortsRead();
+            MccBoard mccBoard = new MccBoard((Int32)UE24);
+            UInt16[] portStates = PortsRead(mccBoard);
 
             portStates[(Int32)PORTS.A]  &= (UInt16)bv32_NC[sectionPortA]; // &= sets portStates bits low for each explicitly assigned NC state in RεC.
             portStates[(Int32)PORTS.B]  &= (UInt16)bv32_NC[sectionPortB];
@@ -235,7 +236,7 @@ namespace ABT.TestSpace.Switching {
             portStates[(Int32)PORTS.CL] |= (UInt16)bv32_NO[sectionPortCL];
             portStates[(Int32)PORTS.CH] |= (UInt16)bv32_NO[sectionPortCH];
 
-            PortsWrite(portStates);
+            PortsWrite(mccBoard, portStates);
         }
 
         public static void Set(UE24 UE24, C C) {
@@ -255,31 +256,31 @@ namespace ABT.TestSpace.Switching {
         #endregion Set
 
         #region private methods
-        internal static UInt16 PortRead(DigitalPortType digitalPortType) {
-            _errorInfo = _mccBoard.DIn(digitalPortType, out UInt16 dataValue);
-            ProcessErrorInfo();
+        internal static UInt16 PortRead(MccBoard mccBoard, DigitalPortType digitalPortType) {
+            ErrorInfo errorInfo = mccBoard.DIn(digitalPortType, out UInt16 dataValue);
+            ProcessErrorInfo(mccBoard, errorInfo);
             return dataValue;
         }
 
-        internal static UInt16[] PortsRead() {
+        internal static UInt16[] PortsRead(MccBoard mccBoard) {
             return new UInt16[] {
-                PortRead(DigitalPortType.FirstPortA),
-                PortRead(DigitalPortType.FirstPortB),
-                PortRead(DigitalPortType.FirstPortCL),
-                PortRead(DigitalPortType.FirstPortCH)
+                PortRead(mccBoard, DigitalPortType.FirstPortA),
+                PortRead(mccBoard, DigitalPortType.FirstPortB),
+                PortRead(mccBoard, DigitalPortType.FirstPortCL),
+                PortRead(mccBoard, DigitalPortType.FirstPortCH)
             };
         }
 
-        internal static void PortWrite(DigitalPortType digitalPortType, UInt16 dataValue) {
-            _errorInfo = _mccBoard.DOut(digitalPortType, dataValue);
-            ProcessErrorInfo();
+        internal static void PortWrite(MccBoard mccBoard, DigitalPortType digitalPortType, UInt16 dataValue) {
+            ErrorInfo errorInfo = mccBoard.DOut(digitalPortType, dataValue);
+            ProcessErrorInfo(mccBoard, errorInfo);
         }
 
-        internal static void PortsWrite(UInt16[] ports) {
-            PortWrite(DigitalPortType.FirstPortA, ports[(Int32)PORTS.A]);
-            PortWrite(DigitalPortType.FirstPortB, ports[(Int32)PORTS.B]);
-            PortWrite(DigitalPortType.FirstPortCL, ports[(Int32)PORTS.CL]);
-            PortWrite(DigitalPortType.FirstPortCH, ports[(Int32)PORTS.CH]);
+        internal static void PortsWrite(MccBoard mccBoard, UInt16[] ports) {
+            PortWrite(mccBoard, DigitalPortType.FirstPortA, ports[(Int32)PORTS.A]);
+            PortWrite(mccBoard, DigitalPortType.FirstPortB, ports[(Int32)PORTS.B]);
+            PortWrite(mccBoard, DigitalPortType.FirstPortCL, ports[(Int32)PORTS.CL]);
+            PortWrite(mccBoard, DigitalPortType.FirstPortCH, ports[(Int32)PORTS.CH]);
         }
 
         internal static DigitalPortType GetPort(R R) {
@@ -292,16 +293,16 @@ namespace ABT.TestSpace.Switching {
             }
         }
 
-        internal static void ProcessErrorInfo() {
+        internal static void ProcessErrorInfo(MccBoard mccBoard, ErrorInfo errorInfo) {
             // Transform C style error-checking to .Net style exceptioning.
-            if (_errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) {
+            if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) {
                 throw new InvalidOperationException(
                 $"{Environment.NewLine}" +
-                $"MccBoard BoardNum   : {_mccBoard.BoardNum}.{Environment.NewLine}" +
-                $"MccBoard BoardName  : {_mccBoard.BoardName}.{Environment.NewLine}" +
-                $"MccBoard Descriptor : {_mccBoard.Descriptor}.{Environment.NewLine}" +
-                $"ErrorInfo Value     : {_errorInfo.Value}.{Environment.NewLine}" +
-                $"ErrorInfo Message   : {_errorInfo.Message}.{Environment.NewLine}");
+                $"MccBoard BoardNum   : {mccBoard.BoardNum}.{Environment.NewLine}" +
+                $"MccBoard BoardName  : {mccBoard.BoardName}.{Environment.NewLine}" +
+                $"MccBoard Descriptor : {mccBoard.Descriptor}.{Environment.NewLine}" +
+                $"ErrorInfo Value     : {errorInfo.Value}.{Environment.NewLine}" +
+                $"ErrorInfo Message   : {errorInfo.Message}.{Environment.NewLine}");
             }
         }
 
