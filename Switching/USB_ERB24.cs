@@ -24,7 +24,7 @@ namespace ABT.TestSpace.Switching {
         // Potential dynamic definition methods for UE24:
         //  - Read them from MCC InstaCal's cb.cfg file.
         //  - Dynamically discover them programmatically: https://www.mccdaq.com/pdfs/manuals/Mcculw_WebHelp/ULStart.htm.
-        //  - Specify MCC USB-ERB24s in App.config, then confirm existence during TestExecutive's initialization.
+        //  - Specify MCC USB-ERB24s in TestExecutive.config.xml.
         // NOTE: MCC's InstaCal USB-ERB24's UE24 number indexing begins at 0, guessing because USB device indexing is likely also zero based.
         // - So UE24.E01 numerical value is 0, which is used when constructing a new MccBoard UE24.E01 object:
         // - Instantiation 'new MccBoard((Int32)UE24.E01)' is equivalent to 'new MccBoard(0)'.
