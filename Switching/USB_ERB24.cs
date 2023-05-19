@@ -255,7 +255,7 @@ namespace ABT.TestSpace.Switching {
         public static void Set(C C) { foreach (UE24 UE24 in Enum.GetValues(typeof(UE24))) Set(UE24, C); }
         #endregion Set
 
-        #region private methods
+        #region internal methods
         internal static UInt16 PortRead(MccBoard mccBoard, DigitalPortType digitalPortType) {
             ErrorInfo errorInfo = mccBoard.DIn(digitalPortType, out UInt16 dataValue);
             ProcessErrorInfo(mccBoard, errorInfo);
@@ -314,6 +314,6 @@ namespace ABT.TestSpace.Switching {
             for (Int32 i = 0; i < ue24RelayCount - 1; i++) ue24BitVector32Masks[i + 1] = BitVector32.CreateMask(ue24BitVector32Masks[i]);
             return ue24BitVector32Masks;
         }
-        #endregion private methods
+        #endregion internal methods
     }
 }
