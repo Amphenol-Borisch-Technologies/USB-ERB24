@@ -8,7 +8,7 @@ using static ABT.TestSpace.Switching.RelayForms;
 
 namespace ABT.TestSpace.Switching {
     public static class USB_ERB24 {
-        // TODO: Convert the USB_ERB24 class to a Singleton, like the USB_TO_GPIO class?
+        // NOTE: Perhaps convert  the USB_ERB24 class to a Singleton, like the USB_TO_GPIO class?
         //  - Realize Singletons often considered "anti-patterns", but handy for objects that can only have 1 instance.
         //  - If there are more than one USB-ERB24s in the test system, make the UE24 Singleton class a Dictionary of USB-ERB24s, rather than just one USB-ERB24.
         //  - Each USB-ERB24 in the Singleton's Dictionary can be accessed by it's UE24 enum; UE24.S01, UE24.S02...UE24.Snn, for UE24 Singletons 01, 02...nn.
