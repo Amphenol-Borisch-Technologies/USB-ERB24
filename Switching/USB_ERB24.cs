@@ -8,7 +8,7 @@ using static ABT.TestSpace.Switching.RelayForms;
 
 namespace ABT.TestSpace.Switching {
     public static class USB_ERB24 {
-        // NOTE: Perhaps convert  the USB_ERB24 class to a Singleton, like the USB_TO_GPIO class?
+        // NOTE: Perhaps convert  the USB_ERB24 class to a Singleton.
         //  - Realize Singletons often considered "anti-patterns", but handy for objects that can only have 1 instance.
         //  - If there are more than one USB-ERB24s in the test system, make the UE24 Singleton class a Dictionary of USB-ERB24s, rather than just one USB-ERB24.
         //  - Each USB-ERB24 in the Singleton's Dictionary can be accessed by it's UE24 enum; UE24.S01, UE24.S02...UE24.Snn, for UE24 Singletons 01, 02...nn.
@@ -28,7 +28,7 @@ namespace ABT.TestSpace.Switching {
         // NOTE: MCC's InstaCal USB-ERB24's UE24 number indexing begins at 0, guessing because USB device indexing is likely also zero based.
         // - So UE24.E01 numerical value is 0, which is used when constructing a new MccBoard UE24.E01 object:
         // - Instantiation 'new MccBoard((Int32)UE24.E01)' is equivalent to 'new MccBoard(0)'.
-        public enum UE24 { E01 }
+        public enum UE24 { E01, E02 }
         public enum R : Byte { C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15, C16, C17, C18, C19, C20, C21, C22, C23, C24 }
         // NOTE: enum named R instead of RELAYS for concision; consider below:
         //  - Set(UE24.E01, new Dictionary<R, C>() {{R.C01,C.NC}, {R.C02,C.NO}, ... {R.C24,C.NC} });
