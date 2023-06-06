@@ -22,13 +22,13 @@ namespace ABT.TestSpace.Switching {
         //  - Dynamically discover them programmatically: https://www.mccdaq.com/pdfs/manuals/Mcculw_WebHelp/ULStart.htm.
         //  - Specify MCC USB-ERB24s in TestExecutive.config.xml.
         // NOTE: MCC's InstaCal USB-ERB24's UE24 number indexing begins at 0, guessing because USB device indexing is likely also zero based.
-        // - So UE24.E01 numerical value is 0, which is used when constructing a new MccBoard UE24.E01 object:
-        // - Instantiation 'new MccBoard((Int32)UE24.E01)' is equivalent to 'new MccBoard(0)'.
-        public enum UE24 { E01, E02 }
+        // - So UE24.RB0 numerical value is 0, which is used when constructing a new MccBoard UE24.RB0 object:
+        // - Instantiation 'new MccBoard((Int32)UE24.RB0)' is equivalent to 'new MccBoard(0)'.
+        public enum UE24 { RB0, RB1 }
         public enum R : Byte { C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15, C16, C17, C18, C19, C20, C21, C22, C23, C24 }
         // NOTE: enum named R instead of RELAYS for concision; consider below:
-        //  - Set(UE24.E01, new Dictionary<R, C>() {{R.C01,C.NC}, {R.C02,C.NO}, ... {R.C24,C.NC} });
-        //  - Set(UE24.E01, new Dictionary<R, C>() {{RELAYS.C01,C.NC}, {RELAYS.C02,C.NO}, ... {RELAYS.C24,C.NC} });
+        //  - Set(UE24.RB0, new Dictionary<R, C>() {{R.C01,C.NC}, {R.C02,C.NO}, ... {R.C24,C.NC} });
+        //  - Set(UE24.RB0, new Dictionary<R, C>() {{RELAYS.C01,C.NC}, {RELAYS.C02,C.NO}, ... {RELAYS.C24,C.NC} });
         // NOTE: R's elements named C## because USB-ERB24's relays are all Form C.
         //  - Also because can't name them R.01, R.02...R.24; identifiers cannot begin with numbers.
         // NOTE: Enumerate Form A relays as R.A01, R.A02...
@@ -42,8 +42,8 @@ namespace ABT.TestSpace.Switching {
         // https://csharpindepth.com/articles/singleton
         private USB_ERB24() {
             this.UE24s = new Dictionary<UE24, MccBoard>() {
-                {UE24.E01, new MccBoard((Int32)UE24.E01)},
-                {UE24.E02, new MccBoard((Int32)UE24.E02)}
+                {UE24.RB0, new MccBoard((Int32)UE24.RB0)},
+                {UE24.RB1, new MccBoard((Int32)UE24.RB1)}
             };
         }
 
