@@ -22,7 +22,7 @@ namespace ABT.TestSpace.Switching {
         //  - Dynamically discover them programmatically: https://www.mccdaq.com/pdfs/manuals/Mcculw_WebHelp/ULStart.htm.
         //  - Specify MCC USB-ERB24s in TestExecutive.config.xml.
         // NOTE: MCC's InstaCal USB-ERB24's UE24 number indexing begins at 0, guessing because USB device indexing is likely also zero based.
-        // - So UE24.RB0 numerical value is 0, which is used when constructing a new MccBoard UE24.RB0 object:
+        // - So UE24.RB0's numerical value is 0, which is used when constructing a new MccBoard UE24.RB0 object:
         // - Instantiation 'new MccBoard((Int32)UE24.RB0)' is equivalent to 'new MccBoard(0)'.
         public enum UE24 { RB0, RB1 }
         public enum R : Byte { C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15, C16, C17, C18, C19, C20, C21, C22, C23, C24 }
