@@ -294,7 +294,7 @@ namespace ABT.TestSpace.Switching {
                 case R relay when R.C09 <= relay && relay <= R.C16: return DigitalPortType.FirstPortB;
                 case R relay when R.C17 <= relay && relay <= R.C20: return DigitalPortType.FirstPortCL;
                 case R relay when R.C21 <= relay && relay <= R.C24: return DigitalPortType.FirstPortCH;
-                default: throw new ArgumentException("Invalid USB-ERB24 DigitalPortType, must be in set '{ FirstPortA, FirstPortB, FirstPortCL, FirstPortCH }'.");
+                default: throw new NotImplementedException($"Unimplemented Enum item; switch/case must support all items in enum '{{{String.Join(",", Enum.GetNames(typeof(R)))}}}'.");
             }
         }
 
