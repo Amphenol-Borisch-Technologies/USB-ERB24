@@ -7,6 +7,21 @@ using MccDaq; // MCC DAQ Universal Library 6.73 from https://www.mccdaq.com/Soft
 using static ABT.TestSpace.TestExec.Switching.RelayForms;
 
 namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
+        public enum UE { B0, B1 } // USB-ERB24 Boards.
+        public enum R : Byte { C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15, C16, C17, C18, C19, C20, C21, C22, C23, C24 } // USB-ERB24 Relays, all Form C.
+        // NOTE: UE enum is a static definition of TestExecutive's MCC USB-ERB24(s).
+        // Potential dynamic definition methods for USB_ERB24s:
+        //  - Read them from MCC InstaCal's cb.cfg file.
+        //  - Dynamically discover them programmatically: https://www.mccdaq.com/pdfs/manuals/Mcculw_WebHelp/ULStart.htm.
+        //  - Specify MCC USB-ERB24s in TestExecutive.config.xml.
+        // NOTE: MCC's InstaCal USB-ERB24 indexing begins at 0, guessing because USB device indexing is likely also zero based.
+        // - So UE.B0's numerical value is 0, which is used when constructing a new MccBoard UE.B0 object:
+        // - Instantiation 'new MccBoard((Int32)UE.B0)' is equivalent to 'new MccBoard(0)'.
+        // NOTE: enum named R instead of RELAYS for concision; consider below:
+        //  - Set(UE.B0, new Dictionary<R, C.S>() {{R.C01,C.S.NC}, {R.C02,C.S.NO}, ... {R.C24,C.S.NC} });
+        //  - Set(UE.B0, new Dictionary<RELAYS, C.S>() {{RELAYS.C01,C.S.NC}, {RELAYS.C02,C.S.NO}, ... {RELAYS.C24,C.S.NC} });
+        // NOTE: R's items named C## because USB-ERB24's relays are all Form C.
+
     public sealed class UE24 {
         // NOTE: Most of this class is compatible with MCC's USB-ERB08 Relay Board, essentially a USB-ERB24 but with only 8 Form C relays instead of the USB-ERB24's 24.
         // - Some portions are specific to the USB-ERB24 however; examples are enum R containing 24 relays & enum PORTS containing 24 bits.
@@ -30,21 +45,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
                 {UE.B1, new MccBoard((Int32)UE.B1)}
             };
         }
-
-        public enum UE { B0, B1 } // USB-ERB24 Boards.
-        public enum R : Byte { C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15, C16, C17, C18, C19, C20, C21, C22, C23, C24 } // USB-ERB24 Relays, all Form C.
-        // NOTE: UE enum is a static definition of TestExecutive's MCC USB-ERB24(s).
-        // Potential dynamic definition methods for USB_ERB24s:
-        //  - Read them from MCC InstaCal's cb.cfg file.
-        //  - Dynamically discover them programmatically: https://www.mccdaq.com/pdfs/manuals/Mcculw_WebHelp/ULStart.htm.
-        //  - Specify MCC USB-ERB24s in TestExecutive.config.xml.
-        // NOTE: MCC's InstaCal USB-ERB24 indexing begins at 0, guessing because USB device indexing is likely also zero based.
-        // - So UE.B0's numerical value is 0, which is used when constructing a new MccBoard UE.B0 object:
-        // - Instantiation 'new MccBoard((Int32)UE.B0)' is equivalent to 'new MccBoard(0)'.
-        // NOTE: enum named R instead of RELAYS for concision; consider below:
-        //  - Set(UE.B0, new Dictionary<R, C.S>() {{R.C01,C.S.NC}, {R.C02,C.S.NO}, ... {R.C24,C.S.NC} });
-        //  - Set(UE.B0, new Dictionary<RELAYS, C.S>() {{RELAYS.C01,C.S.NC}, {RELAYS.C02,C.S.NO}, ... {RELAYS.C24,C.S.NC} });
-        // NOTE: R's items named C## because USB-ERB24's relays are all Form C.
 
         internal enum PORTS { A, B, CL, CH }
         internal static Int32[] _ue24bitVector32Masks = GetUE24BitVector32Masks();
@@ -107,8 +107,8 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         public static Dictionary<R, C.S> Get(UE ue, HashSet<R> rs) {
-            Dictionary<R, C.S> RεS = Get(ue);
-            foreach (R r in rs) if (!RεS.ContainsKey(r)) RεS.Remove(r);
+            Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
+            foreach (R r in rs) RεS.Add(r, Get(ue, r));
             return RεS;
         }
 

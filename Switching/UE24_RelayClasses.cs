@@ -93,36 +93,35 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         public override Int32 GetHashCode() { return 3 * this.UE.GetHashCode() + this.R.GetHashCode() + this.S.GetHashCode(); }
     }
 
-    public sealed class Route {
-        // TODO: Change Route to be to be HashSet<Tuple<Terminal, Terminal>> & ensure 
+    public sealed class SwitchedRoute {
         public readonly Tuple<SwitchedNet, SwitchedNet> SwitchedNetPair;
-        public Route(Tuple<SwitchedNet, SwitchedNet> switchedNetPair) { this.SwitchedNetPair = switchedNetPair; }
+        public SwitchedRoute(Tuple<SwitchedNet, SwitchedNet> switchedNetPair) { this.SwitchedNetPair = switchedNetPair; }
 
         public Boolean Contains(SwitchedNet SN) { return (this.SwitchedNetPair.Item1 == SN) || (this.SwitchedNetPair.Item2 == SN); }
 
         public override Boolean Equals(Object obj) {
-            Route r = obj as Route;
-            if (r == null) return false;
-            if (ReferenceEquals(this, r)) return true;
-            if (r.SwitchedNetPair.Item1 == this.SwitchedNetPair.Item1 && r.SwitchedNetPair.Item2 == this.SwitchedNetPair.Item2) return true;
-            if (r.SwitchedNetPair.Item1 == this.SwitchedNetPair.Item2 && r.SwitchedNetPair.Item2 == this.SwitchedNetPair.Item1) return true;
+            SwitchedRoute sr = obj as SwitchedRoute;
+            if (sr == null) return false;
+            if (ReferenceEquals(this, sr)) return true;
+            if (sr.SwitchedNetPair.Item1 == this.SwitchedNetPair.Item1 && sr.SwitchedNetPair.Item2 == this.SwitchedNetPair.Item2) return true;
+            if (sr.SwitchedNetPair.Item1 == this.SwitchedNetPair.Item2 && sr.SwitchedNetPair.Item2 == this.SwitchedNetPair.Item1) return true;
             return false;
         }
 
         public override Int32 GetHashCode() { return 3 * this.SwitchedNetPair.GetHashCode(); }
     }
 
-    public sealed class RouteStates {
+    public sealed class SwitchedRoutes {
         // TODO: Optimize Connect, DisConnect, AreConnected & AreDisConnected to invoke Set(UE ue, Dictionary<R, C.S> RεS) & Are(UE ue, Dictionary<R, C.S> RεS) for optimally simultaneous switching.
-        public readonly Dictionary<Route, HashSet<State>> RS;
+        public readonly Dictionary<SwitchedRoute, HashSet<State>> SRs;
 
-        public RouteStates(Dictionary<Route, HashSet<State>> RouteStates) { this.RS = RouteStates; }
+        public SwitchedRoutes(Dictionary<SwitchedRoute, HashSet<State>> RouteStates) { this.SRs = RouteStates; }
 
-        public void Connect(SwitchedNet SN1, SwitchedNet SN2) { foreach (State s in this.RS[GetRoute(SN1, SN2)]) Set(s.UE, s.R, s.S); }
+        public void Connect(SwitchedNet SN1, SwitchedNet SN2) { foreach (State s in this.SRs[GetSwitchedRoute(SN1, SN2)]) Set(s.UE, s.R, s.S); }
         
         public void Connect(SwitchedNet SN, HashSet<SwitchedNet> SNs) { foreach (SwitchedNet sn in SNs) Connect(SN, sn); }
 
-        public void DisConnect(SwitchedNet SN1, SwitchedNet SN2) { foreach (State s in this.RS[GetRoute(SN1, SN2)]) Set(s.UE, s.R, GetStateOpposite(s.S)); }
+        public void DisConnect(SwitchedNet SN1, SwitchedNet SN2) { foreach (State s in this.SRs[GetSwitchedRoute(SN1, SN2)]) Set(s.UE, s.R, GetStateOpposite(s.S)); }
 
         public void DisConnect(SwitchedNet SN, HashSet<SwitchedNet> SNs) { foreach (SwitchedNet sn in SNs) DisConnect(SN, sn); }
 
@@ -133,7 +132,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
 
         public Boolean AreConnected(SwitchedNet SN1, SwitchedNet SN2) {
             Boolean ac = true;
-            foreach (State s in this.RS[GetRoute(SN1, SN2)]) ac &= Is(s.UE, s.R, s.S);
+            foreach (State s in this.SRs[GetSwitchedRoute(SN1, SN2)]) ac &= Is(s.UE, s.R, s.S);
             return ac;
         }
 
@@ -147,7 +146,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
 
         public Boolean AreDisConnected(SwitchedNet SN, HashSet<SwitchedNet> SNs) { return !AreConnected(SN, SNs); }
 
-        public Boolean AreConnectable(SwitchedNet SN1, SwitchedNet SN2) { return this.RS.ContainsKey(new Route(Tuple.Create(SN1, SN2))); }
+        public Boolean AreConnectable(SwitchedNet SN1, SwitchedNet SN2) { return this.SRs.ContainsKey(new SwitchedRoute(Tuple.Create(SN1, SN2))); }
 
         public Boolean AreConnectable(SwitchedNet SN, HashSet<SwitchedNet> SNs) {
             Boolean ac = true;
@@ -155,19 +154,19 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             return ac;
         }
 
-        private Route GetRoute(SwitchedNet SN1, SwitchedNet SN2) {
-            Route r = new Route(Tuple.Create(SN1, SN2));
-            if (!this.RS.ContainsKey(r)) r = new Route(Tuple.Create(SN2, SN1)); // If at first you don't succeed...
-            if (!this.RS.ContainsKey(r)) throw new ArgumentException($"Invalid Route SwitchedNets SN1 '{SN1}' & SN2 '{SN2}'.");
-            return r;
+        private SwitchedRoute GetSwitchedRoute(SwitchedNet SN1, SwitchedNet SN2) {
+            SwitchedRoute sr = new SwitchedRoute(Tuple.Create(SN1, SN2));
+            if (!this.SRs.ContainsKey(sr)) sr = new SwitchedRoute(Tuple.Create(SN2, SN1)); // If at first you don't succeed...
+            if (!this.SRs.ContainsKey(sr)) throw new ArgumentException($"Invalid Route SwitchedNets SN1 '{SN1}' & SN2 '{SN2}'.");
+            return sr;
         }
 
         public static C.S GetStateOpposite(C.S State) { return (State == C.S.NO) ? C.S.NC : C.S.NO; }
 
-        public HashSet<Route> GetRoutes(SwitchedNet SN) {
-            HashSet<Route> routes = new HashSet<Route>();
-            foreach (KeyValuePair<Route, HashSet<State>> kvp in this.RS) { if (kvp.Key.Contains(SN)) routes.Add(kvp.Key); }
-            return routes;
+        public HashSet<SwitchedRoute> GetRoutes(SwitchedNet SN) {
+            HashSet<SwitchedRoute> switchedRoutes = new HashSet<SwitchedRoute>();
+            foreach (KeyValuePair<SwitchedRoute, HashSet<State>> kvp in this.SRs) { if (kvp.Key.Contains(SN)) switchedRoutes.Add(kvp.Key); }
+            return switchedRoutes;
             // If can convert:
             //      - Dictionary<String, HashSet<Terminal>>
             // to/from:
