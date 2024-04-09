@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("USB-ERB24")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e0eb4466ceab8cf753e9746865e676cfae7359a2")]
 [assembly: System.Reflection.AssemblyProductAttribute("USB-ERB24")]
 [assembly: System.Reflection.AssemblyTitleAttribute("USB-ERB24")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
