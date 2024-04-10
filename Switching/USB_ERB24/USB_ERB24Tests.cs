@@ -376,12 +376,12 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
                 foreach (R r in rs) {
                     Set(ue, r, C.S.NC);
                     errorInfo = Only.USB_ERB24s[ue].DBitIn(DigitalPortType.FirstPortA, (Int32)r, out digitalLogicState);
-                    ProcessErrorInfo(Only.USB_ERB24s[ue], errorInfo);
+                    if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(Only.USB_ERB24s[ue], errorInfo);
                     Assert.AreEqual(digitalLogicState, DigitalLogicState.Low);
 
                     Set(ue, r, C.S.NO);
                     errorInfo = Only.USB_ERB24s[ue].DBitIn(DigitalPortType.FirstPortA, (Int32)r, out digitalLogicState);
-                    ProcessErrorInfo(Only.USB_ERB24s[ue], errorInfo);
+                    if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(Only.USB_ERB24s[ue], errorInfo);
                     Assert.AreEqual(digitalLogicState, DigitalLogicState.High);
                 }
             }
