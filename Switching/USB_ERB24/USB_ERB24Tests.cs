@@ -16,13 +16,11 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         private static readonly UInt16[] ports0xAA = { 0x00AA, 0x00AA, 0x000A, 0x000A };
         private static readonly UInt16[] ports0x55 = { 0x0055, 0x0055, 0x0005, 0x0005 };
 
-        private static IEnumerable<Object[]> GetRs { get { return new[] { new Object[] { GetRHashSet() } }; } }
-
-        private static IEnumerable<Object[]> GetRεCs { get { return new[] { new Object[] { GetDictionaryRεC_NC(), GetDictionaryRεC_NO() } }; } }
+        private static IEnumerable<Object[]> GetUEs { get { return new[] { new Object[] { GetUEHashSet() } }; } }
 
         private static IEnumerable<Object[]> GetUEεRs { get { return new[] { new Object[] { GetUEHashSet(), GetRHashSet() } }; } }
-
-        private static IEnumerable<Object[]> GetUEs { get { return new[] { new Object[] { GetUEHashSet() } }; } }
+        
+        private static IEnumerable<Object[]> GetUEεRεCs { get { return new[] { new Object[] { GetUEHashSet(), GetDictionaryRεC_NC(), GetDictionaryRεC_NO() } }; } }
 
         private static void ConfirmRs(UE ue, C.S c) {
             DialogResult dr = MessageBox.Show(
@@ -187,7 +185,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         [TestMethod()]
-        [DynamicData(nameof(GetUEεRs))]
+        [DynamicData(nameof(GetUEεRεCs))]
         public void AreRεC_Test(HashSet<UE> ues, Dictionary<R, C.S> RεC_NC, Dictionary<R, C.S> RεC_NO) {
             foreach (UE ue in ues) {
                 PortsWrite(Only.USB_ERB24s[ue], ports0x00);
