@@ -38,16 +38,13 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         public Dictionary<UE, MccBoard> USB_ERB24s;
         private readonly static UE24 _only = new UE24();
 
-
         public static UE24 Only { get { return _only; } }
         static UE24() { }
         // Singleton pattern requires explicit static constructor to tell C# compiler not to mark type as beforefieldinit.
         // https://csharpindepth.com/articles/singleton
         private UE24() {
-            USB_ERB24s = new Dictionary<UE, MccBoard>() {
-                {UE.B0, new MccBoard((Int32)UE.B0)},
-                {UE.B1, new MccBoard((Int32)UE.B1)}
-            };
+            USB_ERB24s = new Dictionary<UE, MccBoard>();
+            foreach (UE ue in Enum.GetValues(typeof(UE))) USB_ERB24s.Add(ue, new MccBoard((Int32)ue));
         }
         internal enum PORTS { A, B, CL, CH }
         private static readonly Dictionary<PORTS, BitVector32.Section> PortSections = new Dictionary<PORTS, BitVector32.Section>() {
@@ -62,7 +59,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
 
         public static void Initialize() {
             // NOTE:  Mustn't invoke TestExecutive.CT_EmergencyStop.ThrowIfCancellationRequested(); on Initialize() or it's invoked methods Reset() & Clear().
-            foreach (UE ue in Enum.GetValues(typeof(UE))) {
+            foreach (UE ue in _only.USB_ERB24s.Keys) {
                 foreach (R r in Enum.GetValues(typeof(R))) {
                     ErrorInfo errorInfo = _only.USB_ERB24s[ue].DBitOut(DigitalPortType.FirstPortA, (Int32)r, DigitalLogicState.Low);
                     if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(_only.USB_ERB24s[ue], errorInfo);
