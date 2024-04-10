@@ -45,15 +45,17 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         private UE24() {
             USB_ERB24s = new Dictionary<UE, MccBoard>();
             foreach (UE ue in Enum.GetValues(typeof(UE))) USB_ERB24s.Add(ue, new MccBoard((Int32)ue));
+            Dictionary<PORTS, BitVector32.Section> PortSections = new Dictionary<PORTS, BitVector32.Section>() {
+                { PORTS.A, BitVector32.CreateSection(0b1111_1111) }
+            };
+            PortSections.Add(PORTS.B, BitVector32.CreateSection(0b1111_1111, PortSections[PORTS.A]));
+            PortSections.Add(PORTS.CL, BitVector32.CreateSection(0b1111_1111, PortSections[PORTS.B]));
+            PortSections.Add(PORTS.CH, BitVector32.CreateSection(0b1111_1111, PortSections[PORTS.CL]));
+            _ue24bitVector32Masks = GetUE24BitVector32Masks();
         }
         internal enum PORTS { A, B, CL, CH }
-        private static readonly Dictionary<PORTS, BitVector32.Section> PortSections = new Dictionary<PORTS, BitVector32.Section>() {
-            { PORTS.A, BitVector32.CreateSection(0b1111_1111) },
-            { PORTS.B, BitVector32.CreateSection(0b1111_1111, PortSections[PORTS.A]) },
-            { PORTS.CL, BitVector32.CreateSection(0b1111_1111, PortSections[PORTS.B]) },
-            { PORTS.CH, BitVector32.CreateSection(0b1111, PortSections[PORTS.CL]) }
-        };
-        internal static Int32[] _ue24bitVector32Masks = GetUE24BitVector32Masks();
+        private static readonly Dictionary<PORTS, BitVector32.Section> PortSections;
+        internal static Int32[] _ue24bitVector32Masks;
 
         #region methods
 

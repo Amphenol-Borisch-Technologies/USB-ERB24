@@ -119,7 +119,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
         #region Declarations, tested in case they change & impact other TestExecutive.Switching methods and/or other MSTest tests.
         [TestMethod()]
-
+        [DynamicData(nameof(GetUEs))]
         public void UEs_Test(HashSet<UE> ues) { for (Int32 i = 0; i < ues.Count; i++) Assert.IsTrue(ues.Contains((UE)i)); }
 
         [TestMethod()]
