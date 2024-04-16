@@ -162,16 +162,11 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             //   once for each of the USB-ERB24's 24 relays, as opposed to 4 times for this method.
             // - Regardless, if preferred, below /*,*/commented code can replace the entirety of this method.
             /*
-            ErrorInfo errorInfo;  DigitalLogicState digitalLogicState;
-            R r;  C.S s;  Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
-            for (Int32 i = 0; i < Enum.GetValues(typeof(R)).Length; i++) {
-                errorInfo = Only.USB_ERB24s[ue].DBitIn(DigitalPortType.FirstPortA, i, out digitalLogicState);
-                ProcessErrorInfo (Only.USB_ERB24s[ue], errorInfo);
-                r = (R)Enum.ToObject(typeof(R), i);
-                s = digitalLogicState == DigitalLogicState.Low ? C.S.NC : C.S.NO;
-                RεS.Add(r, s);
-            }
-            return RεS;
+                public static Dictionary<R, C.S> Get(UE ue) {
+                    Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
+                    foreach (R r in Enum.GetValues(typeof(R))) RεS.Add(r, Get(ue, r));
+                    return RεS;
+                }
             */
 
             UInt16[] portBits = PortsRead(Only.USB_ERB24s[ue]);
@@ -269,11 +264,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             //  - Thought is that DOut will write the bits as simultaneously as possible, at least more so than DBitOut.
             // - Regardless, if preferred, below /*,*/commented code can replace the entirety of this method.
             /*
-            ErrorInfo errorInfo;
-            foreach (KeyValuePair<R, C.S> kvp in RεS) {
-                errorInfo = Only.USB_ERB24s[ue].DBitOut(DigitalPortType.FirstPortA, (Int32)kvp.Key, kvp.Value == C.S.NC ? DigitalLogicState.Low: DigitalLogicState.High);
-                ProcessErrorInfo(Only.USB_ERB24s[ue], errorInfo);
-            }
+                public static void Set(UE ue, Dictionary<R, C.S> RεS) {
+                    foreach (KeyValuePair<R, C.S> kvp in RεS) Set(ue, kvp.Key, kvp.Value);
+                }
             */
 
             UInt32 relayBit;
