@@ -11,7 +11,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
     public enum R { C01 = 00, C02 = 01, C03 = 02, C04 = 03, C05 = 04, C06 = 05, C07 = 06, C08 = 07,
                     C09 = 08, C10 = 09, C11 = 10, C12 = 11, C13 = 12, C14 = 13, C15 = 14, C16 = 15,
                     C17 = 16, C18 = 17, C19 = 18, C20 = 19, C21 = 20, C22 = 21, C23 = 22, C24 = 23 }
-    // R enum represents USB-ERB24 Relays, all Form C, explicitly mapped from relay # to bit number; Relay C01 = bit 0... relay C24 = bit 23. 
+    // R enum represents USB-ERB24 Relays, all Form C, explicitly mapped from relay # to corresponding bit number; Relay C01 = bit 0... relay C24 = bit 23. 
     // NOTE:  UE enum is a static definition of TestExecutive's MCC USB-ERB24(s).
     // Potential dynamic definition methods for USB_ERB24s:
     //  - Read them from MCC InstaCal's cb.cfg file.
