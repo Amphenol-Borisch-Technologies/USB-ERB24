@@ -7,20 +7,23 @@ using MccDaq; // MCC DAQ Universal Library 6.73 from https://www.mccdaq.com/Soft
 using static ABT.TestSpace.TestExec.Switching.RelayForms;
 
 namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
-    public enum UE { B0, B1 } // USB-ERB24 Boards.
-    public enum R : Byte { C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15, C16, C17, C18, C19, C20, C21, C22, C23, C24 } // USB-ERB24 Relays, all Form C.
-                                                                                                                                                    // NOTE:  UE enum is a static definition of TestExecutive's MCC USB-ERB24(s).
-                                                                                                                                                    // Potential dynamic definition methods for USB_ERB24s:
-                                                                                                                                                    //  - Read them from MCC InstaCal's cb.cfg file.
-                                                                                                                                                    //  - Dynamically discover them programmatically: https://www.mccdaq.com/pdfs/manuals/Mcculw_WebHelp/ULStart.htm.
-                                                                                                                                                    //  - Specify MCC USB-ERB24s in TestExecutive.GlobalConfigurationFile.
-                                                                                                                                                    // NOTE:  MCC's InstaCal USB-ERB24 indexing begins at 0, guessing because USB device indexing is likely also zero based.
-                                                                                                                                                    // - So UE.B0's numerical value is 0, which is used when constructing a new MccBoard UE.B0 Object:
-                                                                                                                                                    // - Instantiation 'new MccBoard((Int32)UE.B0)' is equivalent to 'new MccBoard(0)'.
-                                                                                                                                                    // NOTE:  enum named R instead of RELAYS for concision; consider below:
-                                                                                                                                                    //  - Set(UE.B0, new Dictionary<R, C.S>() {{R.C01,C.S.NC}, {R.C02,C.S.NO}, ... {R.C24,C.S.NC} });
-                                                                                                                                                    //  - Set(UE.B0, new Dictionary<RELAYS, C.S>() {{RELAYS.C01,C.S.NC}, {RELAYS.C02,C.S.NO}, ... {RELAYS.C24,C.S.NC} });
-                                                                                                                                                    // NOTE:  R's items named C## because USB-ERB24's relays are all Form C.
+    public enum UE { B0 = 0, B1 = 1 } // USB-ERB24 Boards.
+    public enum R { C01 = 00, C02 = 01, C03 = 02, C04 = 03, C05 = 04, C06 = 05, C07 = 06, C08 = 07,
+                    C09 = 08, C10 = 09, C11 = 10, C12 = 11, C13 = 12, C14 = 13, C15 = 14, C16 = 15,
+                    C17 = 16, C18 = 17, C19 = 18, C20 = 19, C21 = 20, C22 = 21, C23 = 22, C24 = 23 }
+    // R enum represents USB-ERB24 Relays, all Form C, explicitly mapped from relay # to bit number; Relay C01 = bit 0... relay C24 = bit 23. 
+    // NOTE:  UE enum is a static definition of TestExecutive's MCC USB-ERB24(s).
+    // Potential dynamic definition methods for USB_ERB24s:
+    //  - Read them from MCC InstaCal's cb.cfg file.
+    //  - Dynamically discover them programmatically: https://www.mccdaq.com/pdfs/manuals/Mcculw_WebHelp/ULStart.htm.
+    //  - Specify MCC USB-ERB24s in TestExecutive.GlobalConfigurationFile.
+    // NOTE:  MCC's InstaCal USB-ERB24 indexing begins at 0, guessing because USB device indexing is likely also zero based.
+    // - So UE.B0's numerical value is 0, which is used when constructing a new MccBoard UE.B0 Object:
+    // - Instantiation 'new MccBoard((Int32)UE.B0)' is equivalent to 'new MccBoard(0)'.
+    // NOTE:  enum named R instead of RELAYS for concision; consider below:
+    //  - Set(UE.B0, new Dictionary<R, C.S>() {{R.C01,C.S.NC}, {R.C02,C.S.NO}, ... {R.C24,C.S.NC} });
+    //  - Set(UE.B0, new Dictionary<RELAYS, C.S>() {{RELAYS.C01,C.S.NC}, {RELAYS.C02,C.S.NO}, ... {RELAYS.C24,C.S.NC} });
+    // NOTE:  R's items named C## because USB-ERB24's relays are all Form C.
 
     // TODO:  Eventually; change UE24 from a singleton to a static class; consistent with ABT.TestSpace.TestExec.SCPI_VISA_Instruments namespace classes.
     public sealed class UE24 {
@@ -98,7 +101,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each B wired identically to test 1 UUT.
+        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
         /// </summary>
         public static Boolean Are(HashSet<UE> ues, C.S s) {
             Boolean areEqual = true;
@@ -107,7 +110,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each B wired identically to test 1 UUT.
+        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
         /// </summary>
         public static Boolean Are(HashSet<UE> ues, HashSet<R> rs, C.S s) {
             Boolean areEqual = true;
@@ -116,7 +119,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each B wired identically to test 1 UUT.
+        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
         /// </summary>
         public static Boolean Are(Dictionary<UE, Dictionary<R, C.S>> UEεRεS) {
             Boolean areEqual = true;
@@ -125,7 +128,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each B wired identically to test 1 UUT.
+        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
         /// </summary>
         public static Boolean Are(C.S s) {
             Boolean areEqual = true;
@@ -274,7 +277,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             UInt32 bits_NO = 0x0000_0000; // bits_NO utilize Boolean Or logic.
 
             foreach (KeyValuePair<R, C.S> kvp in RεS) {
-                relayBit = (UInt32)1 << (Byte)kvp.Key;
+                relayBit = (UInt32)1 << (Int32)kvp.Key;
                 if (kvp.Value == C.S.NC) bits_NC ^= relayBit;  // Sets a 0 in bits_NC for each explicitly assigned NC state in RεS.
                 else bits_NO |= relayBit;                      // Sets a 1 in bits_NO for each explicitly assigned NO state in RεS.
             }
