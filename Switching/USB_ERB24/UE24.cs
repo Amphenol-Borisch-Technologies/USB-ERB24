@@ -45,9 +45,8 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         private UE24() {
             USB_ERB24s = new Dictionary<UE, MccBoard>();
             foreach (UE ue in Enum.GetValues(typeof(UE))) USB_ERB24s.Add(ue, new MccBoard((Int32)ue));
-            Dictionary<PORTS, BitVector32.Section> PortSections = new Dictionary<PORTS, BitVector32.Section>() {
-                { PORTS.A, BitVector32.CreateSection(0b1111_1111) }
-            };
+            Dictionary<PORTS, BitVector32.Section> PortSections = new Dictionary<PORTS, BitVector32.Section>();
+            PortSections.Add(PORTS.A, BitVector32.CreateSection(0b1111_1111));
             PortSections.Add(PORTS.B, BitVector32.CreateSection(0b1111_1111, PortSections[PORTS.A]));
             PortSections.Add(PORTS.CL, BitVector32.CreateSection(0b1111_1111, PortSections[PORTS.B]));
             PortSections.Add(PORTS.CH, BitVector32.CreateSection(0b1111_1111, PortSections[PORTS.CL]));
@@ -176,7 +175,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             */
 
             UInt16[] portBits = PortsRead(Only.USB_ERB24s[ue]);
-            UInt32[] biggerPortBits = Array.ConvertAll(portBits, delegate (UInt16 uInt16) { return (UInt32)uInt16; });
+            UInt32[] biggerPortBits = Array.ConvertAll(portBits, delegate (UInt16 uint16) { return (UInt32)uint16; });
             UInt32 relayBits = 0x0000;
             relayBits |= biggerPortBits[(UInt32)PORTS.CH] << 00;
             relayBits |= biggerPortBits[(UInt32)PORTS.CL] << 04;
@@ -184,12 +183,8 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             relayBits |= biggerPortBits[(UInt32)PORTS.A] << 16;
             BitVector32 bitVector32 = new BitVector32((Int32)relayBits);
 
-            R r; C.S s; Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
-            for (Int32 i = 0; i < _ue24bitVector32Masks.Length; i++) {
-                r = (R)Enum.ToObject(typeof(R), i);
-                s = bitVector32[_ue24bitVector32Masks[i]] ? C.S.NO : C.S.NC;
-                RεS.Add(r, s);
-            }
+            Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
+            for (Int32 i = 0; i < _ue24bitVector32Masks.Length; i++) RεS.Add((R)i, bitVector32[_ue24bitVector32Masks[i]] ? C.S.NO : C.S.NC);
             return RεS;
         }
 
