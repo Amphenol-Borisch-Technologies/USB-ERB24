@@ -193,7 +193,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each B wired identically to test 1 UUT.
+        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
         /// </summary>
         public static Dictionary<UE, Dictionary<R, C.S>> Get(HashSet<UE> ues) {
             Dictionary<UE, Dictionary<R, C.S>> UEεRεS = Get();
@@ -202,7 +202,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each B wired identically to test 1 UUT.
+        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
         /// </summary>
         public static Dictionary<UE, Dictionary<R, C.S>> Get(HashSet<UE> ues, HashSet<R> rs) {
             Dictionary<UE, Dictionary<R, C.S>> UEεRεS = new Dictionary<UE, Dictionary<R, C.S>>();
@@ -211,7 +211,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each B wired identically to test 1 UUT.
+        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
         /// </summary>
         public static Dictionary<UE, Dictionary<R, C.S>> Get(Dictionary<UE, R> UEεR) {
             Dictionary<UE, Dictionary<R, C.S>> UEεRεS = new Dictionary<UE, Dictionary<R, C.S>>();
@@ -224,7 +224,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each B wired identically to test 1 UUT.
+        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
         /// </summary>
         public static Dictionary<UE, Dictionary<R, C.S>> Get() {
             Dictionary<UE, Dictionary<R, C.S>> UEεRεS = new Dictionary<UE, Dictionary<R, C.S>>();
@@ -313,14 +313,14 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each B wired identically to test 1 UUT.
+        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
         /// </summary>
         public static void Set(HashSet<UE> ues, C.S s) {
             foreach (UE ue in ues) { Set(ue, s); }
         }
 
         /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each B wired identically to test 1 UUT.
+        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
         /// </summary>
         public static void Set(HashSet<UE> ues, HashSet<R> rs, C.S s) {
             foreach (UE ue in ues) {
@@ -330,14 +330,14 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each B wired identically to test 1 UUT.
+        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
         /// </summary>
         public static void Set(Dictionary<UE, Dictionary<R, C.S>> UEεRεS) {
             foreach (KeyValuePair<UE, Dictionary<R, C.S>> kvp in UEεRεS) Set(kvp.Key, kvp.Value);
         }
 
         /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each B wired identically to test 1 UUT.
+        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
         /// </summary>
         public static void Set(C.S s) {
             foreach (UE ue in Enum.GetValues(typeof(UE))) Set(ue, s);
