@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using MccDaq; // MCC DAQ Universal Library 6.73 from https://www.mccdaq.com/Software-Downloads.
 using static ABT.TestSpace.TestExec.Switching.RelayForms;
 using static ABT.TestSpace.TestExec.Switching.USB_ERB24.UE24;
+using System.Diagnostics;
 
 namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
     [TestClass()]
@@ -420,11 +421,11 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEs))]
         public void SetUEεRεC_Test(HashSet<UE> ues) {
             Dictionary<UE, Dictionary<R, C.S>> ueεRεC = new Dictionary<UE, Dictionary<R, C.S>>();
-            foreach (UE ue in ues) ueεRεC.Add(ue, GetDictionaryRεC_NC());
+            foreach (UE ue in ues) ueεRεC.Add(ue, GetDictionaryRεC_NO());
             Set(ueεRεC);
             foreach (UE ue in ues) Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
             ueεRεC = new Dictionary<UE, Dictionary<R, C.S>>();
-            foreach (UE ue in ues) ueεRεC.Add(ue, GetDictionaryRεC_NO());
+            foreach (UE ue in ues) ueεRεC.Add(ue, GetDictionaryRεC_NC());
             Set(ueεRεC);
             foreach (UE ue in ues) Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
         }

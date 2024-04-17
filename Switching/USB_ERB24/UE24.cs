@@ -38,29 +38,30 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         //  - Pull-Down:      Relays are de-energized at power-up.
         //  - https://www.mccdaq.com/PDFs/Manuals/usb-erb24.pdf.
 
-        public Dictionary<UE, MccBoard> USB_ERB24s;
+        public readonly Dictionary<UE, MccBoard> USB_ERB24s;
+        internal enum PORTS { A, B, CL, CH }
+        internal static readonly Dictionary<PORTS, BitVector32.Section> PortSections;
+        internal static readonly Int32[] _ue24bitVector32Masks;
         private readonly static UE24 _only = new UE24();
-
         public static UE24 Only { get { return _only; } }
-        static UE24() { }
+
+        static UE24() {
+            Dictionary<PORTS, BitVector32.Section> PortSections = new Dictionary<PORTS, BitVector32.Section>();
+            PortSections.Add(PORTS.A, BitVector32.CreateSection(0b_1111_1111));
+            PortSections.Add(PORTS.B, BitVector32.CreateSection(0b_1111_1111, PortSections[PORTS.A]));
+            PortSections.Add(PORTS.CL, BitVector32.CreateSection(0b_1111, PortSections[PORTS.B]));
+            PortSections.Add(PORTS.CH, BitVector32.CreateSection(0b_1111, PortSections[PORTS.CL]));
+            _ue24bitVector32Masks = GetUE24BitVector32Masks();
+        }
         // Singleton pattern requires explicit static constructor to tell C# compiler not to mark type as beforefieldinit.
         // https://csharpindepth.com/articles/singleton
+
         private UE24() {
             USB_ERB24s = new Dictionary<UE, MccBoard>();
             foreach (UE ue in Enum.GetValues(typeof(UE))) USB_ERB24s.Add(ue, new MccBoard((Int32)ue));
-            Dictionary<PORTS, BitVector32.Section> PortSections = new Dictionary<PORTS, BitVector32.Section>();
-            PortSections.Add(PORTS.A, BitVector32.CreateSection(0b1111_1111));
-            PortSections.Add(PORTS.B, BitVector32.CreateSection(0b1111_1111, PortSections[PORTS.A]));
-            PortSections.Add(PORTS.CL, BitVector32.CreateSection(0b1111_1111, PortSections[PORTS.B]));
-            PortSections.Add(PORTS.CH, BitVector32.CreateSection(0b1111_1111, PortSections[PORTS.CL]));
-            _ue24bitVector32Masks = GetUE24BitVector32Masks();
         }
-        internal enum PORTS { A, B, CL, CH }
-        private static readonly Dictionary<PORTS, BitVector32.Section> PortSections;
-        internal static Int32[] _ue24bitVector32Masks;
 
         #region methods
-
         public static void Initialize() {
             // NOTE:  Mustn't invoke TestExecutive.CT_EmergencyStop.ThrowIfCancellationRequested(); on Initialize() or it's invoked methods Reset() & Clear().
             foreach (UE ue in _only.USB_ERB24s.Keys) {
@@ -155,7 +156,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         // TODO:  Soon; make this method work, replacing Get(UE ue) method.
-        public static Dictionary<R, C.S> Get_InProgress(UE ue) {
+        public static Dictionary<R, C.S> Get(UE ue) {
             // Obviously, can utilize MccBoard.DBitIn to read individual bits, instead of MccBoard.DIn to read multiple bits:
             // - But, the USB-ERB24's reads it's relay states by reading its internal 82C55's ports.
             // - These ports appear to operate similarly to MccBoard's DIn function, that is, they read the 82C55's 
@@ -182,11 +183,11 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             BitVector32 bitVector32 = new BitVector32((Int32)relayBits);
 
             Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
-            for (Int32 i = 0; i < _ue24bitVector32Masks.Length; i++) RεS.Add((R)i, bitVector32[_ue24bitVector32Masks[i]] ? C.S.NO : C.S.NC);
+            for (Int32 i = 0; i < Only._ue24bitVector32Masks.Length; i++) RεS.Add((R)i, bitVector32[Only._ue24bitVector32Masks[i]] ? C.S.NO : C.S.NC);
             return RεS;
         }
 
-        public static Dictionary<R, C.S> Get(UE ue) {
+        public static Dictionary<R, C.S> GetOld(UE ue) {
             Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
             foreach (R r in Enum.GetValues(typeof(R))) RεS.Add(r, Get(ue, r));
             return RεS;
@@ -250,7 +251,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         // TODO:  Soon; make this method work, replacing Set(UE ue, Dictionary<R, C.S> RεS) method.
-        public static void Set_InProgress(UE ue, Dictionary<R, C.S> RεS) {
+        public static void Set(UE ue, Dictionary<R, C.S> RεS) {
             // This method only sets relay states for relays explicitly declared in RεS.
             //  - That is, if RεS = {{R.C01, C.S.NO}, {R.C02, C.S.NC}}, then only relays R.C01 & R.C02 will have their states actively set, respectively to NO & NC.
             //  - Relay states R.C03, R.C04...R.C24 remain as they were:
@@ -273,7 +274,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             */
 
             UInt32 relayBit;
-            UInt32 bits_NC = 0xFFFF_FFFF; // bits_NC utilize Boolean And logic.
+            UInt32 bits_NC = 0x00FF_FFFF; // bits_NC utilize Boolean And logic.  Note only using 24 bits due to USB-ERB24.
             UInt32 bits_NO = 0x0000_0000; // bits_NO utilize Boolean Or logic.
 
             foreach (KeyValuePair<R, C.S> kvp in RεS) {
@@ -281,27 +282,35 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
                 if (kvp.Value == C.S.NC) bits_NC ^= relayBit;  // Sets a 0 in bits_NC for each explicitly assigned NC state in RεS.
                 else bits_NO |= relayBit;                      // Sets a 1 in bits_NO for each explicitly assigned NO state in RεS.
             }
+            Debug.WriteLine($"bits_NC: 0x{bits_NC:X8}");
+            Debug.WriteLine($"bits_NO: 0x{bits_NO:X8}");
 
             BitVector32 bv32_NC = new BitVector32((Int32)bits_NC);
             BitVector32 bv32_NO = new BitVector32((Int32)bits_NO);
+            Debug.WriteLine($"bv32_NC: {bv32_NC}");
+            Debug.WriteLine($"bv32_NO: {bv32_NO}");
 
             UInt16[] portStates = PortsRead(Only.USB_ERB24s[ue]);
+            for (Int32 i = 0; i < portStates.Length; i++) Debug.WriteLine($"portStates[{i}]: 0x{portStates[i]:X4}");
+            foreach (PORTS port in Enum.GetValues(typeof(PORTS))) Debug.WriteLine($"port: '{port}'.");
+            foreach (PORTS port in Enum.GetValues(typeof(PORTS))) Debug.WriteLine($"PortSections[PORTS.{Enum.GetName(typeof(PORTS), port)}]: '{Only.PortSections[port]}'.");
+            foreach (PORTS port in Enum.GetValues(typeof(PORTS))) Debug.WriteLine($"bv32_NC[PortSections[Ports.{Enum.GetName(typeof(PORTS), port)}]: '{bv32_NC[Only.PortSections[port]]}'.");
 
-            portStates[(Int32)PORTS.A] &= (UInt16)bv32_NC[PortSections[PORTS.A]]; // &= sets portStates bits low for each explicitly assigned NC state in RεS.
-            portStates[(Int32)PORTS.B] &= (UInt16)bv32_NC[PortSections[PORTS.B]];
-            portStates[(Int32)PORTS.CL] &= (UInt16)bv32_NC[PortSections[PORTS.CL]];
-            portStates[(Int32)PORTS.CH] &= (UInt16)bv32_NC[PortSections[PORTS.CH]];
+            portStates[(Int32)PORTS.A] &= (UInt16)bv32_NC[Only.PortSections[PORTS.A]]; // &= sets portStates bits low for each explicitly assigned NC state in RεS.
+            portStates[(Int32)PORTS.B] &= (UInt16)bv32_NC[Only.PortSections[PORTS.B]];
+            portStates[(Int32)PORTS.CL] &= (UInt16)bv32_NC[Only.PortSections[PORTS.CL]];
+            portStates[(Int32)PORTS.CH] &= (UInt16)bv32_NC[Only.PortSections[PORTS.CH]];
 
-            portStates[(Int32)PORTS.A] |= (UInt16)bv32_NO[PortSections[PORTS.A]]; // |= sets portStates bits high for each explicitly assigned NO state in RεS.
-            portStates[(Int32)PORTS.B] |= (UInt16)bv32_NO[PortSections[PORTS.B]];
-            portStates[(Int32)PORTS.CL] |= (UInt16)bv32_NO[PortSections[PORTS.CL]];
-            portStates[(Int32)PORTS.CH] |= (UInt16)bv32_NO[PortSections[PORTS.CH]];
+            portStates[(Int32)PORTS.A] |= (UInt16)bv32_NO[Only.PortSections[PORTS.A]]; // |= sets portStates bits high for each explicitly assigned NO state in RεS.
+            portStates[(Int32)PORTS.B] |= (UInt16)bv32_NO[Only.PortSections[PORTS.B]];
+            portStates[(Int32)PORTS.CL] |= (UInt16)bv32_NO[Only.PortSections[PORTS.CL]];
+            portStates[(Int32)PORTS.CH] |= (UInt16)bv32_NO[Only.PortSections[PORTS.CH]];
 
             PortsWrite(Only.USB_ERB24s[ue], portStates);
             Debug.Assert(PortsRead(Only.USB_ERB24s[ue]).SequenceEqual(portStates));
         }
 
-        public static void Set(UE ue, Dictionary<R, C.S> RεS) {
+        public static void SetOld(UE ue, Dictionary<R, C.S> RεS) {
             foreach (KeyValuePair<R, C.S> kvp in RεS) Set(ue, kvp.Key, kvp.Value);
         }
 
