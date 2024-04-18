@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Policy;
 using MccDaq; // MCC DAQ Universal Library 6.73 from https://www.mccdaq.com/Software-Downloads.
 using static ABT.TestSpace.TestExec.Switching.RelayForms;
 
@@ -42,7 +43,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         internal static readonly Int32[] _ue24bitVector32Masks = GetUE24BitVector32Masks();
         internal enum PORTS { A, B, CL, CH }
 
-        #region methods
         public static void Initialize() {
             // NOTE:  Mustn't invoke TestExecutive.CT_EmergencyStop.ThrowIfCancellationRequested(); on Initialize() or it's invoked methods Reset() & Clear().
             foreach (UE ue in USB_ERB24s.Keys) {
@@ -82,36 +82,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             return areEqual;
         }
 
-        /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
-        /// </summary>
-        public static Boolean Are(HashSet<UE> ues, C.S s) {
-            Boolean areEqual = true;
-            foreach (UE ue in ues) areEqual &= Are(ue, s);
-            return areEqual;
-        }
-
-        /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
-        /// </summary>
-        public static Boolean Are(HashSet<UE> ues, HashSet<R> rs, C.S s) {
-            Boolean areEqual = true;
-            foreach (UE ue in ues) areEqual &= Are(ue, rs, s);
-            return areEqual;
-        }
-
-        /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
-        /// </summary>
-        public static Boolean Are(Dictionary<UE, Dictionary<R, C.S>> UEεRεS) {
-            Boolean areEqual = true;
-            foreach (KeyValuePair<UE, Dictionary<R, C.S>> kvp in UEεRεS) areEqual &= Are(kvp.Key, kvp.Value);
-            return areEqual;
-        }
-
-        /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
-        /// </summary>
         public static Boolean Are(C.S s) {
             Boolean areEqual = true;
             foreach (UE ue in Enum.GetValues(typeof(UE))) areEqual &= Are(ue, s);
@@ -120,14 +90,16 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         #endregion Is/Are
 
         #region Get
-        /// <summary>
-        /// Get(UE ue, R r) wraps MccBoard's DBitIn(DigitalPortType portType, Int32 bitNum, out DigitalLogicState bitValue) function.
-        /// one of the four available MccBoard functions for the USB-ERB8 & USB-ERB24.
-        /// </summary>
         public static C.S Get(UE ue, R r) {
             ErrorInfo errorInfo = USB_ERB24s[ue].DBitIn(DigitalPortType.FirstPortA, (Int32)r, out DigitalLogicState digitalLogicState);
             if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(USB_ERB24s[ue], errorInfo);
             return digitalLogicState == DigitalLogicState.Low ? C.S.NC : C.S.NO;
+        }
+
+        public static HashSet<R> Get(UE ue, C.S s) {
+            HashSet<R> Rs = new HashSet<R>();
+            foreach (R r in Enum.GetValues(typeof(R))) if (Get(ue, r) == s) Rs.Add(r);
+            return Rs;
         }
 
         public static Dictionary<R, C.S> Get(UE ue, HashSet<R> rs) {
@@ -167,40 +139,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             return RεS;
         }
 
-        /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
-        /// </summary>
-        public static Dictionary<UE, Dictionary<R, C.S>> Get(HashSet<UE> ues) {
-            Dictionary<UE, Dictionary<R, C.S>> UEεRεS = Get();
-            foreach (UE ue in ues) if (!UEεRεS.ContainsKey(ue)) UEεRεS.Remove(ue);
-            return UEεRεS;
-        }
-
-        /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
-        /// </summary>
-        public static Dictionary<UE, Dictionary<R, C.S>> Get(HashSet<UE> ues, HashSet<R> rs) {
-            Dictionary<UE, Dictionary<R, C.S>> UEεRεS = new Dictionary<UE, Dictionary<R, C.S>>();
-            foreach (UE ue in ues) UEεRεS.Add(ue, Get(ue, rs));
-            return UEεRεS;
-        }
-
-        /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
-        /// </summary>
-        public static Dictionary<UE, Dictionary<R, C.S>> Get(Dictionary<UE, R> UEεR) {
-            Dictionary<UE, Dictionary<R, C.S>> UEεRεS = new Dictionary<UE, Dictionary<R, C.S>>();
-            Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
-            foreach (KeyValuePair<UE, R> kvp in UEεR) {
-                RεS.Add(kvp.Value, Get(kvp.Key, kvp.Value));
-                UEεRεS.Add(kvp.Key, RεS);
-            }
-            return UEεRεS;
-        }
-
-        /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
-        /// </summary>
         public static Dictionary<UE, Dictionary<R, C.S>> Get() {
             Dictionary<UE, Dictionary<R, C.S>> UEεRεS = new Dictionary<UE, Dictionary<R, C.S>>();
             foreach (UE ue in Enum.GetValues(typeof(UE))) UEεRεS.Add(ue, Get(ue));
@@ -224,7 +162,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             Debug.Assert(Are(ue, rs.ToDictionary(r => r, r => s)));
         }
 
-        // TODO:  Soon; make this method work, replacing Set(UE ue, Dictionary<R, C.S> RεS) method.
         public static void Set(UE ue, Dictionary<R, C.S> RεS) {
             // This method only sets relay states for relays explicitly declared in RεS.
             //  - That is, if RεS = {{R.C01, C.S.NO}, {R.C02, C.S.NC}}, then only relays R.C01 & R.C02 will have their states actively set, respectively to NO & NC.
@@ -289,33 +226,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             Debug.Assert(Are(ue, RεS));
         }
 
-        /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
-        /// </summary>
-        public static void Set(HashSet<UE> ues, C.S s) {
-            foreach (UE ue in ues) { Set(ue, s); }
-        }
-
-        /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
-        /// </summary>
-        public static void Set(HashSet<UE> ues, HashSet<R> rs, C.S s) {
-            foreach (UE ue in ues) {
-                Set(ue, rs, s);
-                Debug.Assert(Are(ue, rs, s));
-            }
-        }
-
-        /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
-        /// </summary>
-        public static void Set(Dictionary<UE, Dictionary<R, C.S>> UEεRεS) {
-            foreach (KeyValuePair<UE, Dictionary<R, C.S>> kvp in UEεRεS) Set(kvp.Key, kvp.Value);
-        }
-
-        /// <summary>
-        /// Mainly useful for parallelism, when testing multiple UUTs concurrently, with each UE wired identically to test 1 UUT.
-        /// </summary>
         public static void Set(C.S s) {
             foreach (UE ue in Enum.GetValues(typeof(UE))) Set(ue, s);
             Debug.Assert(Are(s));
@@ -404,6 +314,5 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             return PortSections;
         }
         #endregion internal methods
-        #endregion methods
     }
 }
