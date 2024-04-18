@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using MccDaq; // MCC DAQ Universal Library 6.73 from https://www.mccdaq.com/Software-Downloads.
 using static ABT.TestSpace.TestExec.Switching.RelayForms;
 using static ABT.TestSpace.TestExec.Switching.USB_ERB24.UE24;
-using System.Diagnostics;
 
 namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
     [TestClass()]
@@ -167,9 +166,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEεRs))]
         public void Is_Test(HashSet<UE> ues, HashSet<R> rs) {
             foreach (UE ue in ues) {
-                PortsWrite(Only.USB_ERB24s[ue], ports0x00);
+                PortsWrite(USB_ERB24s[ue], ports0x00);
                 foreach (R r in rs) Assert.IsTrue(Is(ue, r, C.S.NC));
-                PortsWrite(Only.USB_ERB24s[ue], ports0xFF);
+                PortsWrite(USB_ERB24s[ue], ports0xFF);
                 foreach (R r in rs) Assert.IsTrue(Is(ue, r, C.S.NO));
             }
         }
@@ -178,9 +177,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEεRs))]
         public void AreRs_Test(HashSet<UE> ues, HashSet<R> rs) {
             foreach (UE ue in ues) {
-                PortsWrite(Only.USB_ERB24s[ue], ports0x00);
+                PortsWrite(USB_ERB24s[ue], ports0x00);
                 Assert.IsTrue(Are(ue, rs, C.S.NC));
-                PortsWrite(Only.USB_ERB24s[ue], ports0xFF);
+                PortsWrite(USB_ERB24s[ue], ports0xFF);
                 Assert.IsTrue(Are(ue, rs, C.S.NO));
             }
         }
@@ -189,9 +188,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEεRεCs))]
         public void AreRεC_Test(HashSet<UE> ues, Dictionary<R, C.S> RεC_NC, Dictionary<R, C.S> RεC_NO) {
             foreach (UE ue in ues) {
-                PortsWrite(Only.USB_ERB24s[ue], ports0x00);
+                PortsWrite(USB_ERB24s[ue], ports0x00);
                 Assert.IsTrue(Are(ue, RεC_NC));
-                PortsWrite(Only.USB_ERB24s[ue], ports0xFF);
+                PortsWrite(USB_ERB24s[ue], ports0xFF);
                 Assert.IsTrue(Are(ue, RεC_NO));
             }
         }
@@ -200,10 +199,10 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEs))]
         public void AreUE_C_Test(HashSet<UE> ues) {
             foreach (UE ue in ues) {
-                PortsWrite(Only.USB_ERB24s[ue], ports0x00);
+                PortsWrite(USB_ERB24s[ue], ports0x00);
                 Assert.IsTrue(Are(ue, C.S.NC));
                 ConfirmRs(ue, C.S.NC);
-                PortsWrite(Only.USB_ERB24s[ue], ports0xFF);
+                PortsWrite(USB_ERB24s[ue], ports0xFF);
                 Assert.IsTrue(Are(ue, C.S.NO));
                 ConfirmRs(ue, C.S.NO);
             }
@@ -213,11 +212,11 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEs))]
         public void AreUEs_C_Test(HashSet<UE> ues) {
             foreach (UE ue in ues) {
-                PortsWrite(Only.USB_ERB24s[ue], ports0x00);
+                PortsWrite(USB_ERB24s[ue], ports0x00);
                 Assert.IsTrue(Are(ue, C.S.NC));
             }
             foreach (UE ue in ues) {
-                PortsWrite(Only.USB_ERB24s[ue], ports0xFF);
+                PortsWrite(USB_ERB24s[ue], ports0xFF);
                 Assert.IsTrue(Are(ue, C.S.NO));
             }
         }
@@ -225,9 +224,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [TestMethod()]
         [DynamicData(nameof(GetUEεRs))]
         public void AreUEs_Rs_C_Test(HashSet<UE> ues, HashSet<R> rs) {
-            foreach (UE ue in ues) PortsWrite(Only.USB_ERB24s[ue], ports0x00);
+            foreach (UE ue in ues) PortsWrite(USB_ERB24s[ue], ports0x00);
             Assert.IsTrue(Are(ues, rs, C.S.NC));
-            foreach (UE ue in ues) PortsWrite(Only.USB_ERB24s[ue], ports0xFF);
+            foreach (UE ue in ues) PortsWrite(USB_ERB24s[ue], ports0xFF);
             Assert.IsTrue(Are(ues, rs, C.S.NO));
         }
 
@@ -236,9 +235,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         public void AreUEs_RεC_Test(HashSet<UE> ues) {
             Dictionary<UE, Dictionary<R, C.S>> ueεRεC = ues.ToDictionary(ue => ue, ue => GetDictionaryRεC_NC());
 
-            foreach (UE ue in ues) PortsWrite(Only.USB_ERB24s[ue], ports0x00);
+            foreach (UE ue in ues) PortsWrite(USB_ERB24s[ue], ports0x00);
             Assert.IsTrue(Are(ueεRεC));
-            foreach (UE ue in ues) PortsWrite(Only.USB_ERB24s[ue], ports0xFF);
+            foreach (UE ue in ues) PortsWrite(USB_ERB24s[ue], ports0xFF);
             ueεRεC = ues.ToDictionary(ue => ue, ue => GetDictionaryRεC_NO());
             Assert.IsTrue(Are(ueεRεC));
         }
@@ -247,13 +246,13 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEs))]
         public void Are_Test(HashSet<UE> ues) {
             foreach (UE ue in ues) {
-                PortsWrite(Only.USB_ERB24s[ue], ports0x00);
+                PortsWrite(USB_ERB24s[ue], ports0x00);
                 Boolean arelow = true;
                 arelow &= Are(ue, C.S.NC);
                 Assert.IsTrue(arelow);
             }
             foreach (UE ue in ues) {
-                PortsWrite(Only.USB_ERB24s[ue], ports0xFF);
+                PortsWrite(USB_ERB24s[ue], ports0xFF);
                 Boolean areHIGH = true;
                 areHIGH &= Are(ue, C.S.NO);
                 Assert.IsTrue(areHIGH);
@@ -264,9 +263,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEεRs))]
         public void GetR_Test(HashSet<UE> ues, HashSet<R> rs) {
             foreach (UE ue in ues) {
-                PortsWrite(Only.USB_ERB24s[ue], ports0x00);
+                PortsWrite(USB_ERB24s[ue], ports0x00);
                 foreach (R r in rs) Assert.AreEqual(Get(ue, r), C.S.NC);
-                PortsWrite(Only.USB_ERB24s[ue], ports0xFF);
+                PortsWrite(USB_ERB24s[ue], ports0xFF);
                 foreach (R r in rs) Assert.AreEqual(Get(ue, r), C.S.NO);
             }
         }
@@ -276,10 +275,10 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         public void Get_Test(HashSet<UE> ues) {
             Dictionary<R, C.S> RεC;
             foreach (UE ue in ues) {
-                PortsWrite(Only.USB_ERB24s[ue], ports0x00);
+                PortsWrite(USB_ERB24s[ue], ports0x00);
                 RεC = Get(ue);
                 foreach (KeyValuePair<R, C.S> kvp in RεC) Assert.AreEqual(kvp.Value, C.S.NC);
-                PortsWrite(Only.USB_ERB24s[ue], ports0xFF);
+                PortsWrite(USB_ERB24s[ue], ports0xFF);
                 RεC = Get(ue);
                 foreach (KeyValuePair<R, C.S> kvp in RεC) Assert.AreEqual(kvp.Value, C.S.NO);
             }
@@ -289,7 +288,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEs))]
         public void GetRεC_Test(HashSet<UE> ues) {
             Dictionary<UE, Dictionary<R, C.S>> ueεRεC_Test = new Dictionary<UE, Dictionary<R, C.S>>();
-            foreach (UE ue in ues) PortsWrite(Only.USB_ERB24s[ue], ports0x00);
+            foreach (UE ue in ues) PortsWrite(USB_ERB24s[ue], ports0x00);
             foreach (UE ue in ues) ueεRεC_Test.Add(ue, GetDictionaryRεC_NC());
             Dictionary<UE, Dictionary<R, C.S>> ueεRεC = Get();
             Assert.AreEqual(ueεRεC_Test.Count, ueεRεC.Count);
@@ -305,13 +304,13 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             Dictionary<R, C.S> RεC_Test;
             Dictionary<R, C.S> RεC;
             foreach (UE ue in ues) {
-                PortsWrite(Only.USB_ERB24s[ue], ports0x00);
+                PortsWrite(USB_ERB24s[ue], ports0x00);
                 RεC_Test = GetDictionaryRεC_NC();
                 RεC = Get(ue, GetRHashSet());
                 Assert.AreEqual(RεC_Test.Count, RεC.Count);
                 Assert.IsTrue(!RεC.Except(RεC_Test).Any());
 
-                PortsWrite(Only.USB_ERB24s[ue], ports0xFF);
+                PortsWrite(USB_ERB24s[ue], ports0xFF);
                 RεC_Test = GetDictionaryRεC_NO();
                 RεC = Get(ue, GetRHashSet());
                 Assert.AreEqual(RεC_Test.Count, RεC.Count);
@@ -327,9 +326,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
                     Set(ue, C.S.NO);
                     Set(ue, C.S.NC);
                 }
-                Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+                Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(USB_ERB24s[ue])));
                 Set(ue, C.S.NO);
-                Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+                Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(USB_ERB24s[ue])));
             }
         }
 
@@ -339,22 +338,22 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             UInt16[] ports;
             foreach (UE ue in ues) {
                 Set(ue, GetDictionaryRεC_NC());
-                ports = PortsRead(Only.USB_ERB24s[ue]);
+                ports = PortsRead(USB_ERB24s[ue]);
                 for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
-                Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+                Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(USB_ERB24s[ue])));
 
                 Set(ue, GetDictionaryRεC_X_NO());
-                ports = PortsRead(Only.USB_ERB24s[ue]);
+                ports = PortsRead(USB_ERB24s[ue]);
                 for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
-                Assert.IsTrue(ports0xAA.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+                Assert.IsTrue(ports0xAA.SequenceEqual(PortsRead(USB_ERB24s[ue])));
 
                 Set(ue, GetDictionaryRεC_NO_X());
-                ports = PortsRead(Only.USB_ERB24s[ue]);
+                ports = PortsRead(USB_ERB24s[ue]);
                 for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
-                Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+                Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(USB_ERB24s[ue])));
 
                 Set(ue, new Dictionary<R, C.S>() { { R.C01, C.S.NC }, { R.C08, C.S.NC }, { R.C09, C.S.NC }, { R.C16, C.S.NC }, { R.C17, C.S.NC }, { R.C20, C.S.NC }, { R.C21, C.S.NC }, { R.C24, C.S.NC } });
-                ports = PortsRead(Only.USB_ERB24s[ue]);
+                ports = PortsRead(USB_ERB24s[ue]);
                 for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
                 Assert.AreEqual(ports[(Int32)PORTS.A], 0x7E);
                 Assert.AreEqual(ports[(Int32)PORTS.B], 0x7E);
@@ -362,9 +361,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
                 Assert.AreEqual(ports[(Int32)PORTS.CH], 0x6);
 
                 Set(ue, new Dictionary<R, C.S>() { { R.C01, C.S.NO }, { R.C08, C.S.NO }, { R.C09, C.S.NO }, { R.C16, C.S.NO }, { R.C17, C.S.NO }, { R.C20, C.S.NO }, { R.C21, C.S.NO }, { R.C24, C.S.NO } });
-                ports = PortsRead(Only.USB_ERB24s[ue]);
+                ports = PortsRead(USB_ERB24s[ue]);
                 for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
-                Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+                Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(USB_ERB24s[ue])));
             }
         }
 
@@ -376,13 +375,13 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             foreach (UE ue in ues) {
                 foreach (R r in rs) {
                     Set(ue, r, C.S.NC);
-                    errorInfo = Only.USB_ERB24s[ue].DBitIn(DigitalPortType.FirstPortA, (Int32)r, out digitalLogicState);
-                    if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(Only.USB_ERB24s[ue], errorInfo);
+                    errorInfo = USB_ERB24s[ue].DBitIn(DigitalPortType.FirstPortA, (Int32)r, out digitalLogicState);
+                    if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(USB_ERB24s[ue], errorInfo);
                     Assert.AreEqual(digitalLogicState, DigitalLogicState.Low);
 
                     Set(ue, r, C.S.NO);
-                    errorInfo = Only.USB_ERB24s[ue].DBitIn(DigitalPortType.FirstPortA, (Int32)r, out digitalLogicState);
-                    if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(Only.USB_ERB24s[ue], errorInfo);
+                    errorInfo = USB_ERB24s[ue].DBitIn(DigitalPortType.FirstPortA, (Int32)r, out digitalLogicState);
+                    if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(USB_ERB24s[ue], errorInfo);
                     Assert.AreEqual(digitalLogicState, DigitalLogicState.High);
                 }
             }
@@ -393,9 +392,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         public void SetUE_Rs_C_Test(HashSet<UE> ues, HashSet<R> rs) {
             foreach (UE ue in ues) {
                 Set(ue, rs, C.S.NC);
-                Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+                Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(USB_ERB24s[ue])));
                 Set(ue, rs, C.S.NO);
-                Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+                Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(USB_ERB24s[ue])));
             }
         }
 
@@ -403,31 +402,39 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEs))]
         public void SetUEs_C_Test(HashSet<UE> ues) {
             Set(ues, C.S.NC);
-            foreach (UE ue in ues) Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+            foreach (UE ue in ues) Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(USB_ERB24s[ue])));
             Set(ues, C.S.NO);
-            foreach (UE ue in ues) Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+            foreach (UE ue in ues) Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(USB_ERB24s[ue])));
         }
 
         [TestMethod()]
         [DynamicData(nameof(GetUEεRs))]
         public void SetUEs_Rs_C_Test(HashSet<UE> ues, HashSet<R> rs) {
             Set(ues, rs, C.S.NC);
-            foreach (UE ue in ues) Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+            foreach (UE ue in ues) Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(USB_ERB24s[ue])));
             Set(ues, rs, C.S.NO);
-            foreach (UE ue in ues) Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+            foreach (UE ue in ues) Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(USB_ERB24s[ue])));
         }
 
         [TestMethod()]
         [DynamicData(nameof(GetUEs))]
         public void SetUEεRεC_Test(HashSet<UE> ues) {
             Dictionary<UE, Dictionary<R, C.S>> ueεRεC = new Dictionary<UE, Dictionary<R, C.S>>();
-            foreach (UE ue in ues) ueεRεC.Add(ue, GetDictionaryRεC_NO());
-            Set(ueεRεC);
-            foreach (UE ue in ues) Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
-            ueεRεC = new Dictionary<UE, Dictionary<R, C.S>>();
             foreach (UE ue in ues) ueεRεC.Add(ue, GetDictionaryRεC_NC());
             Set(ueεRεC);
-            foreach (UE ue in ues) Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+            foreach (UE ue in ues) Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(USB_ERB24s[ue])));
+            ueεRεC.Clear();
+            foreach (UE ue in ues) ueεRεC.Add(ue, GetDictionaryRεC_NO());
+            Set(ueεRεC);
+            foreach (UE ue in ues) Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(USB_ERB24s[ue])));
+            ueεRεC.Clear();
+            foreach (UE ue in ues) ueεRεC.Add(ue, GetDictionaryRεC_NC_NO());
+            Set(ueεRεC);
+            foreach (UE ue in ues) Assert.IsTrue(ports0xAA.SequenceEqual(PortsRead(USB_ERB24s[ue])));
+            ueεRεC.Clear();
+            foreach (UE ue in ues) ueεRεC.Add(ue, GetDictionaryRεC_NO_NC());
+            Set(ueεRεC);
+            foreach (UE ue in ues) Assert.IsTrue(ports0x55.SequenceEqual(PortsRead(USB_ERB24s[ue])));
         }
 
         [TestMethod()]
@@ -435,10 +442,10 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         public void SetC_Test(HashSet<UE> ues) {
             foreach (UE ue in ues) {
                 Set(ue, C.S.NC);
-                Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+                Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(USB_ERB24s[ue])));
 
                 Set(ue, C.S.NO);
-                Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(Only.USB_ERB24s[ue])));
+                Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(USB_ERB24s[ue])));
             }
         }
         #endregion public method tests
@@ -449,14 +456,14 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         public void PortRead_Test(HashSet<UE> ues) {
             foreach (UE ue in ues) {
                 ErrorInfo errorInfo = new ErrorInfo();
-                Assert.IsTrue(WriteReadPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortA, ports0x00[(Int32)PORTS.A]));
-                Assert.IsTrue(WriteReadPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortB, ports0x00[(Int32)PORTS.B]));
-                Assert.IsTrue(WriteReadPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCL, ports0x00[(Int32)PORTS.CL]));
-                Assert.IsTrue(WriteReadPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCH, ports0x00[(Int32)PORTS.CH]));
-                Assert.IsTrue(WriteReadPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortA, ports0xFF[(Int32)PORTS.A]));
-                Assert.IsTrue(WriteReadPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortB, ports0xFF[(Int32)PORTS.B]));
-                Assert.IsTrue(WriteReadPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCL, ports0xFF[(Int32)PORTS.CL]));
-                Assert.IsTrue(WriteReadPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCH, ports0xFF[(Int32)PORTS.CH]));
+                Assert.IsTrue(WriteReadPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortA, ports0x00[(Int32)PORTS.A]));
+                Assert.IsTrue(WriteReadPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortB, ports0x00[(Int32)PORTS.B]));
+                Assert.IsTrue(WriteReadPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCL, ports0x00[(Int32)PORTS.CL]));
+                Assert.IsTrue(WriteReadPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCH, ports0x00[(Int32)PORTS.CH]));
+                Assert.IsTrue(WriteReadPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortA, ports0xFF[(Int32)PORTS.A]));
+                Assert.IsTrue(WriteReadPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortB, ports0xFF[(Int32)PORTS.B]));
+                Assert.IsTrue(WriteReadPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCL, ports0xFF[(Int32)PORTS.CL]));
+                Assert.IsTrue(WriteReadPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCH, ports0xFF[(Int32)PORTS.CH]));
             }
         }
 
@@ -464,8 +471,8 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEs))]
         public void PortsRead_Test(HashSet<UE> ues) {
             foreach (UE ue in ues) {
-                Assert.IsTrue(WriteReadPorts(Only.USB_ERB24s[ue], ports0x00));
-                Assert.IsTrue(WriteReadPorts(Only.USB_ERB24s[ue], ports0xFF));
+                Assert.IsTrue(WriteReadPorts(USB_ERB24s[ue], ports0x00));
+                Assert.IsTrue(WriteReadPorts(USB_ERB24s[ue], ports0xFF));
             }
         }
 
@@ -474,14 +481,14 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         public void PortWrite_Test(HashSet<UE> ues) {
             foreach (UE ue in ues) {
                 ErrorInfo errorInfo = new ErrorInfo();
-                Assert.IsTrue(ReadWritPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortA, ports0x00[(Int32)PORTS.A]));
-                Assert.IsTrue(ReadWritPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortB, ports0x00[(Int32)PORTS.B]));
-                Assert.IsTrue(ReadWritPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCL, ports0x00[(Int32)PORTS.CL]));
-                Assert.IsTrue(ReadWritPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCH, ports0x00[(Int32)PORTS.CH]));
-                Assert.IsTrue(ReadWritPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortA, ports0xFF[(Int32)PORTS.A]));
-                Assert.IsTrue(ReadWritPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortB, ports0xFF[(Int32)PORTS.B]));
-                Assert.IsTrue(ReadWritPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCL, ports0xFF[(Int32)PORTS.CL]));
-                Assert.IsTrue(ReadWritPort(Only.USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCH, ports0xFF[(Int32)PORTS.CH]));
+                Assert.IsTrue(ReadWritPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortA, ports0x00[(Int32)PORTS.A]));
+                Assert.IsTrue(ReadWritPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortB, ports0x00[(Int32)PORTS.B]));
+                Assert.IsTrue(ReadWritPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCL, ports0x00[(Int32)PORTS.CL]));
+                Assert.IsTrue(ReadWritPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCH, ports0x00[(Int32)PORTS.CH]));
+                Assert.IsTrue(ReadWritPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortA, ports0xFF[(Int32)PORTS.A]));
+                Assert.IsTrue(ReadWritPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortB, ports0xFF[(Int32)PORTS.B]));
+                Assert.IsTrue(ReadWritPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCL, ports0xFF[(Int32)PORTS.CL]));
+                Assert.IsTrue(ReadWritPort(USB_ERB24s[ue], errorInfo, DigitalPortType.FirstPortCH, ports0xFF[(Int32)PORTS.CH]));
             }
         }
 
@@ -489,8 +496,8 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEs))]
         public void PortsWrite_Test(HashSet<UE> ues) {
             foreach (UE ue in ues) {
-                Assert.IsTrue(ReadWritPorts(Only.USB_ERB24s[ue], ports0x00));
-                Assert.IsTrue(ReadWritPorts(Only.USB_ERB24s[ue], ports0xFF));
+                Assert.IsTrue(ReadWritPorts(USB_ERB24s[ue], ports0x00));
+                Assert.IsTrue(ReadWritPorts(USB_ERB24s[ue], ports0xFF));
             }
         }
 
