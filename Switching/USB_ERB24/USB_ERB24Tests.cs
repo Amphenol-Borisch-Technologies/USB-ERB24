@@ -335,22 +335,22 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             foreach (UE ue in ues) {
                 Set(ue, GetDictionaryRεC_NC());
                 ports = PortsRead(USB_ERB24s[ue]);
-                for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
+                for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}]={ports[i]:X}");
                 Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(USB_ERB24s[ue])));
 
                 Set(ue, GetDictionaryRεC_X_NO());
                 ports = PortsRead(USB_ERB24s[ue]);
-                for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
+                for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}]={ports[i]:X}");
                 Assert.IsTrue(ports0xAA.SequenceEqual(PortsRead(USB_ERB24s[ue])));
 
                 Set(ue, GetDictionaryRεC_NO_X());
                 ports = PortsRead(USB_ERB24s[ue]);
-                for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
+                for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}]={ports[i]:X}");
                 Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(USB_ERB24s[ue])));
 
                 Set(ue, new Dictionary<R, C.S>() { { R.C01, C.S.NC }, { R.C08, C.S.NC }, { R.C09, C.S.NC }, { R.C16, C.S.NC }, { R.C17, C.S.NC }, { R.C20, C.S.NC }, { R.C21, C.S.NC }, { R.C24, C.S.NC } });
                 ports = PortsRead(USB_ERB24s[ue]);
-                for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
+                for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}]={ports[i]:X}");
                 Assert.AreEqual(ports[(Int32)PORTS.A], 0x7E);
                 Assert.AreEqual(ports[(Int32)PORTS.B], 0x7E);
                 Assert.AreEqual(ports[(Int32)PORTS.CL], 0x6);
@@ -358,7 +358,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
 
                 Set(ue, new Dictionary<R, C.S>() { { R.C01, C.S.NO }, { R.C08, C.S.NO }, { R.C09, C.S.NO }, { R.C16, C.S.NO }, { R.C17, C.S.NO }, { R.C20, C.S.NO }, { R.C21, C.S.NO }, { R.C24, C.S.NO } });
                 ports = PortsRead(USB_ERB24s[ue]);
-                for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}={ports[i]:X}");
+                for (Int32 i = 0; i < ports.Length; i++) Console.WriteLine($"Port[{i}]={ports[i]:X}");
                 Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(USB_ERB24s[ue])));
             }
         }
