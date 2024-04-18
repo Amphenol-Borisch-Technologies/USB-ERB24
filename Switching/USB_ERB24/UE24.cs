@@ -96,12 +96,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             return digitalLogicState == DigitalLogicState.Low ? C.S.NC : C.S.NO;
         }
 
-        public static HashSet<R> Get(UE ue, C.S s) {
-            HashSet<R> Rs = new HashSet<R>();
-            foreach (R r in Enum.GetValues(typeof(R))) if (Get(ue, r) == s) Rs.Add(r);
-            return Rs;
-        }
-
         public static Dictionary<R, C.S> Get(UE ue, HashSet<R> rs) {
             Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
             foreach (R r in rs) RεS.Add(r, Get(ue, r));
@@ -137,6 +131,12 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
             for (Int32 i = 0; i < _ue24bitVector32Masks.Length; i++) RεS.Add((R)i, bitVector32[_ue24bitVector32Masks[i]] ? C.S.NO : C.S.NC);
             return RεS;
+        }
+
+        public static HashSet<R> Get(UE ue, C.S s) {
+            HashSet<R> Rs = new HashSet<R>();
+            foreach (R r in Enum.GetValues(typeof(R))) if (Get(ue, r) == s) Rs.Add(r);
+            return Rs;
         }
 
         public static Dictionary<UE, Dictionary<R, C.S>> Get() {
