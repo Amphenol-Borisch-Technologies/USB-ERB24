@@ -215,9 +215,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         [DynamicData(nameof(GetUEs))]
         public void AreUEs_RεC_Test(HashSet<UE> ues) {
             foreach (UE ue in ues) PortsWrite(USB_ERB24s[ue], ports0x00);
-            Assert.IsTrue(Are(C.S.NO));
-            foreach (UE ue in ues) PortsWrite(USB_ERB24s[ue], ports0xFF);
             Assert.IsTrue(Are(C.S.NC));
+            foreach (UE ue in ues) PortsWrite(USB_ERB24s[ue], ports0xFF);
+            Assert.IsTrue(Are(C.S.NO));
         }
         #endregion Is/Are
 
