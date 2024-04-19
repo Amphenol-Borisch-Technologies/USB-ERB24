@@ -70,9 +70,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
 
         public static Boolean Are(UE ue, Dictionary<R, C.S> RεS) {
             Dictionary<R, C.S> Actual = Get(ue, new HashSet<R>(RεS.Keys));
-            Boolean are = true;
-            foreach (KeyValuePair<R, C.S> kvp in RεS) are &= kvp.Value == Actual[kvp.Key];
-            return are;
+            Boolean areEqual = true;
+            foreach (KeyValuePair<R, C.S> kvp in RεS) areEqual &= kvp.Value == Actual[kvp.Key];
+            return areEqual;
         }
 
         public static Boolean Are(UE ue, C.S s) {
@@ -185,7 +185,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             */
 
             UInt32 relayBit;
-            UInt32 bits_NC = 0x00FF_FFFF; // bits_NC utilize Boolean And logic.  Note only using 24 bits due to USB-ERB24.
+            UInt32 bits_NC = 0x00FF_FFFF; // bits_NC utilize Boolean And logic.  Note using 24 bits due to USB-ERB24.
             UInt32 bits_NO = 0x0000_0000; // bits_NO utilize Boolean Or logic.
 
             foreach (KeyValuePair<R, C.S> kvp in RεS) {
@@ -202,8 +202,10 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             Debug.WriteLine($"bv32_NO: {bv32_NO}");
 
             UInt16[] portStates = PortsRead(USB_ERB24s[ue]);
-            for (Int32 i = 0; i < portStates.Length; i++) Debug.WriteLine($"portStates[{i}]: 0x{portStates[i]:X4}");
-            foreach (PORTS port in Enum.GetValues(typeof(PORTS))) Debug.WriteLine($"bv32_NC[PortSections[Ports.{Enum.GetName(typeof(PORTS), port)}]: '{bv32_NC[PortSections[port]]}'.");
+            foreach (PORTS port in Enum.GetValues(typeof(PORTS))) {
+                Debug.WriteLine($"portStates[{port}]: 0x{portStates[(Int32)port]:X4}");
+                Debug.WriteLine($"bv32_NC[PortSections[{port}]: '{bv32_NC[PortSections[port]]}'.");
+            }
 
             portStates[(Int32)PORTS.A] &= (UInt16)bv32_NC[PortSections[PORTS.A]]; // &= sets portStates bits low for each explicitly assigned NC state in RεS.
             portStates[(Int32)PORTS.B] &= (UInt16)bv32_NC[PortSections[PORTS.B]];
@@ -220,8 +222,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         public static void Set(UE ue, C.S s) {
-            Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
-            foreach (R r in Enum.GetValues(typeof(R))) RεS.Add(r, s);
+            Dictionary<R, C.S> RεS = new HashSet<R>(Enum.GetValues(typeof(R)).Cast<R>()).ToDictionary(r => r, r => s);
             Set(ue, RεS);
             Debug.Assert(Are(ue, RεS));
         }
