@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Policy;
 using MccDaq; // MCC DAQ Universal Library 6.73 from https://www.mccdaq.com/Software-Downloads.
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static ABT.TestSpace.TestExec.Switching.RelayForms;
 
 namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
@@ -45,11 +46,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
 
         public static void Initialize() {
             // NOTE:  Mustn't invoke TestExecutive.CT_EmergencyStop.ThrowIfCancellationRequested(); on Initialize() or it's invoked methods Reset() & Clear().
+            UInt16[] ports0x00 = { 0x0000, 0x0000, 0x0000, 0x0000 };
             foreach (UE ue in USB_ERB24s.Keys) {
-                foreach (R r in Enum.GetValues(typeof(R))) {
-                    ErrorInfo errorInfo = USB_ERB24s[ue].DBitOut(DigitalPortType.FirstPortA, (Int32)r, DigitalLogicState.Low);
-                    if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(USB_ERB24s[ue], errorInfo);
-                }
+                PortsWrite(USB_ERB24s[ue], ports0x00);
             }
         }
 
@@ -256,7 +255,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         /// <summary>
         /// Private methods PortWrite() & PortsWrite() wrap MccBoard's DOut(DigitalPortType portType, UInt16 dataValue) function,
         /// one of the four available MccBoard functions for the USB-ERB8 & USB-ERB24.
-        /// As yet they've no client methods.
         /// </summary>
         internal static void PortWrite(MccBoard mccBoard, DigitalPortType digitalPortType, UInt16 dataValue) {
             ErrorInfo errorInfo = mccBoard.DOut(digitalPortType, dataValue);
