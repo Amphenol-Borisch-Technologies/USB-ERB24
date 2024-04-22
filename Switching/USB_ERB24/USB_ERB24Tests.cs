@@ -10,8 +10,8 @@ using static ABT.TestSpace.TestExec.Switching.USB_ERB24.UE24;
 namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
     [TestClass()]
     public class USB_ERB24_Tests {
-        private static readonly UInt16[] ports0x00 = { 0x0000, 0x0000, 0x0000, 0x0000 };
-        private static readonly UInt16[] ports0xFF = { 0x00FF, 0x00FF, 0x000F, 0x000F };
+        internal static readonly UInt16[] ports0x00 = { 0x0000, 0x0000, 0x0000, 0x0000 };
+        internal static readonly UInt16[] ports0xFF = { 0x00FF, 0x00FF, 0x000F, 0x000F };
         private static readonly UInt16[] ports0xAA = { 0x00AA, 0x00AA, 0x000A, 0x000A };
         private static readonly UInt16[] ports0x55 = { 0x0055, 0x0055, 0x0005, 0x0005 };
 

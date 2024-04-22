@@ -11,7 +11,8 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
     public enum R { C01 = 00, C02 = 01, C03 = 02, C04 = 03, C05 = 04, C06 = 05, C07 = 06, C08 = 07,
                     C09 = 08, C10 = 09, C11 = 10, C12 = 11, C13 = 12, C14 = 13, C15 = 14, C16 = 15,
                     C17 = 16, C18 = 17, C19 = 18, C20 = 19, C21 = 20, C22 = 21, C23 = 22, C24 = 23 }
-    // R enum represents USB-ERB24 Relays, all Form C, explicitly mapped from relay # to corresponding bit number; Relay C01 = bit 0... relay C24 = bit 23. 
+    // R enum represents USB-ERB24 Relays, all Form C, explicitly correlated from relay # to corresponding bit number; Relay C01 = bit 0... relay C24 = bit 23. 
+    //
     // NOTE:  UE enum is a static definition of TestExecutive's MCC USB-ERB24(s).
     // Potential dynamic definition methods for USB_ERB24s:
     //  - Read them from MCC InstaCal's cb.cfg file.
@@ -25,16 +26,16 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
     //  - Set(UE.B0, new Dictionary<R, C.S>() {{R.C01,C.S.NC}, {R.C02,C.S.NO}, ... {R.C24,C.S.NC} });
     //  - Set(UE.B0, new Dictionary<RELAYS, C.S>() {{RELAYS.C01,C.S.NC}, {RELAYS.C02,C.S.NO}, ... {RELAYS.C24,C.S.NC} });
     // NOTE:  R's items named C## because USB-ERB24's relays are all Form C.
-        // NOTE:  Most of this class is compatible with MCC's USB-ERB08 Relay Board, essentially a USB-ERB24 but with only 8 Form C relays instead of the USB-ERB24's 24.
-        // - Some portions are specific to the USB-ERB24 however; examples are enum R containing 24 relays & enum PORT containing 24 bits.
-        // NOTE:  This class assumes all USB-ERB24 relays are configured for Non-Inverting Logic & Pull-Down/de-energized at power-up.
-        // NOTE:  USB-ERB24 relays are configurable for either Non-Inverting or Inverting logic, via hardware DIP switch S1.
-        //  - Non-Inverting:  Logic low de-energizes the relays, logic high energizes them.
-        //  - Inverting:      Logic low energizes the relays, logic high de-energizes them.  
-        // NOTE:  USB-ERB24 relays are configurable with default power-up states, via hardware DIP switch S2.
-        //  - Pull-Up:        Relays are energized at power-up.
-        //  - Pull-Down:      Relays are de-energized at power-up.
-        //  - https://www.mccdaq.com/PDFs/Manuals/usb-erb24.pdf.
+    // NOTE:  Most of this class is compatible with MCC's USB-ERB08 Relay Board, essentially a USB-ERB24 but with only 8 Form C relays instead of the USB-ERB24's 24.
+    // - Some portions are specific to the USB-ERB24 however; examples are enum R containing 24 relays & enum PORT containing 24 bits.
+    // NOTE:  This class assumes all USB-ERB24 relays are configured for Non-Inverting Logic & Pull-Down/de-energized at power-up.
+    // NOTE:  USB-ERB24 relays are configurable for either Non-Inverting or Inverting logic, via hardware DIP switch S1.
+    //  - Non-Inverting:  Logic low de-energizes the relays, logic high energizes them.
+    //  - Inverting:      Logic low energizes the relays, logic high de-energizes them.  
+    // NOTE:  USB-ERB24 relays are configurable with default power-up states, via hardware DIP switch S2.
+    //  - Pull-Up:        Relays are energized at power-up.
+    //  - Pull-Down:      Relays are de-energized at power-up.
+    //  - https://www.mccdaq.com/PDFs/Manuals/usb-erb24.pdf.
 
     public static class UE24 {
         public static readonly Dictionary<UE, MccBoard> USB_ERB24s = GetUSB_ERB24s();
@@ -42,22 +43,13 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         internal static readonly Int32[] _ue24bitVector32Masks = GetUE24BitVector32Masks();
         internal enum PORTS { A, B, CL, CH }
 
-        public static void Initialize() {
-            // NOTE:  Mustn't invoke TestExecutive.CT_EmergencyStop.ThrowIfCancellationRequested(); on Initialize() or it's invoked methods Reset() & Clear().
-            UInt16[] ports0x00 = { 0x0000, 0x0000, 0x0000, 0x0000 };
-            foreach (UE ue in USB_ERB24s.Keys) {
-                PortsWrite(USB_ERB24s[ue], ports0x00);
-            }
-        }
+        public static void Initialize() { foreach (UE ue in USB_ERB24s.Keys) PortsWrite(USB_ERB24s[ue], USB_ERB24_Tests.ports0x00); }
+        // NOTE:  Mustn't invoke TestExecutive.CT_EmergencyStop.ThrowIfCancellationRequested(); on Initialize() or it's invoked methods Reset() & Clear().
 
-        public static Boolean Initialized() {
-            return Are(C.S.NC);
-        }
+        public static Boolean Initialized() { return Are(C.S.NC); }
 
         #region Is/Are
-        public static Boolean Is(UE ue, R r, C.S s) {
-            return Get(ue, r) == s;
-        }
+        public static Boolean Is(UE ue, R r, C.S s) { return Get(ue, r) == s; }
 
         public static Boolean Are(UE ue, HashSet<R> rs, C.S s) {
             Dictionary<R, C.S> RεS = rs.ToDictionary(r => r, r => s);
@@ -73,15 +65,14 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         public static Boolean Are(UE ue, C.S s) {
-            Dictionary<R, C.S> Are = Get(ue);
             Boolean areEqual = true;
-            foreach (KeyValuePair<R, C.S> kvp in Are) areEqual &= kvp.Value == s;
+            foreach (C.S S in Get(ue).Values) areEqual &= S == s;
             return areEqual;
         }
 
         public static Boolean Are(C.S s) {
             Boolean areEqual = true;
-            foreach (UE ue in Enum.GetValues(typeof(UE))) areEqual &= Are(ue, s);
+            foreach (UE ue in USB_ERB24s.Keys) areEqual &= Are(ue, s);
             return areEqual;
         }
         #endregion Is/Are
@@ -138,7 +129,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
 
         public static Dictionary<UE, Dictionary<R, C.S>> Get() {
             Dictionary<UE, Dictionary<R, C.S>> UEεRεS = new Dictionary<UE, Dictionary<R, C.S>>();
-            foreach (UE ue in Enum.GetValues(typeof(UE))) UEεRεS.Add(ue, Get(ue));
+            foreach (UE ue in USB_ERB24s.Keys) UEεRεS.Add(ue, Get(ue));
             return UEεRεS;
         }
         #endregion Get
@@ -225,7 +216,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         public static void Set(C.S s) {
-            foreach (UE ue in Enum.GetValues(typeof(UE))) Set(ue, s);
+            foreach (UE ue in USB_ERB24s.Keys) Set(ue, s);
             Debug.Assert(Are(s));
         }
         #endregion Set
