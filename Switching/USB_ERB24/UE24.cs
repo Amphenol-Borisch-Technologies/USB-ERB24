@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Policy;
 using MccDaq; // MCC DAQ Universal Library 6.73 from https://www.mccdaq.com/Software-Downloads.
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static ABT.TestSpace.TestExec.Switching.RelayForms;
 
 namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
