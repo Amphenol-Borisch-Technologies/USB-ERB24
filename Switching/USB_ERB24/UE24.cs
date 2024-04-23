@@ -102,11 +102,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         #region Get
         public static C.S Get(UE ue, R r) { return BitRead(USB_ERB24s[ue], (Int32)r) is DigitalLogicState.Low ? C.S.NC : C.S.NO; }
 
-        public static Dictionary<R, C.S> Get(UE ue, HashSet<R> rs) {
-            Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
-            foreach (R r in rs) RεS.Add(r, Get(ue, r));
-            return RεS;
-        }
+        public static Dictionary<R, C.S> Get(UE ue, HashSet<R> rs) { return rs.ToDictionary(r => r, r => Get(ue, r)); }
 
         public static Dictionary<R, C.S> Get(UE ue) {
             // Obviously, can utilize MccBoard.DBitIn to read individual bits, instead of MccBoard.DIn to read multiple bits:
