@@ -100,7 +100,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         #endregion Is/Are
 
         #region Get
-        public static C.S Get(UE ue, R r) { return BitRead(USB_ERB24s[ue], (Int32)r) == DigitalLogicState.Low ? C.S.NC : C.S.NO; }
+        public static C.S Get(UE ue, R r) { return BitRead(USB_ERB24s[ue], (Int32)r) is DigitalLogicState.Low ? C.S.NC : C.S.NO; }
 
         public static Dictionary<R, C.S> Get(UE ue, HashSet<R> rs) {
             Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
