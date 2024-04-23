@@ -110,7 +110,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
     }
 
     public sealed class SwitchedRoutes {
-        // TODO: Optimize Connect, DisConnect, AreConnected & AreDisConnected to invoke Set(UE ue, Dictionary<R, C.S> RεS) & Are(UE ue, Dictionary<R, C.S> RεS) for optimally simultaneous switching.
         public readonly Dictionary<SwitchedRoute, HashSet<State>> SRs;
 
         public SwitchedRoutes(Dictionary<SwitchedRoute, HashSet<State>> RouteStates) { SRs = RouteStates; }
