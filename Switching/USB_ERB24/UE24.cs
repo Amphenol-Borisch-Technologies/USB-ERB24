@@ -12,7 +12,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
                     C09 = 08, C10 = 09, C11 = 10, C12 = 11, C13 = 12, C14 = 13, C15 = 14, C16 = 15,
                     C17 = 16, C18 = 17, C19 = 18, C20 = 19, C21 = 20, C22 = 21, C23 = 22, C24 = 23 }
     // R enum represents USB-ERB24 Relays, all Form C, explicitly correlated from relay # to corresponding bit number; Relay C01 = bit 0... relay C24 = bit 23. 
-    //
+
     // NOTE:  UE enum is a static definition of TestExecutive's MCC USB-ERB24(s).
     // Potential dynamic definition methods for USB_ERB24s:
     //  - Read them from MCC InstaCal's cb.cfg file.
@@ -42,9 +42,31 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         internal static readonly Dictionary<PORTS, BitVector32.Section> PortSections = GetPortSections();
         internal static readonly Int32[] _ue24bitVector32Masks = GetUE24BitVector32Masks();
         internal enum PORTS { A, B, CL, CH }
+        private static Int32[] GetUE24BitVector32Masks() {
+            Int32 ue24RelayCount = Enum.GetValues(typeof(R)).Length;
+            Debug.Assert(ue24RelayCount == 24);
+            Int32[] ue24BitVector32Masks = new Int32[ue24RelayCount];
+            ue24BitVector32Masks[0] = BitVector32.CreateMask();
+            for (Int32 i = 0; i < ue24RelayCount - 1; i++) ue24BitVector32Masks[i + 1] = BitVector32.CreateMask(ue24BitVector32Masks[i]);
+            return ue24BitVector32Masks;
+        }
+        private static Dictionary<UE, MccBoard> GetUSB_ERB24s() {
+            Dictionary<UE, MccBoard> USB_ERB24s = new Dictionary<UE, MccBoard>();
+            foreach (UE ue in Enum.GetValues(typeof(UE))) USB_ERB24s.Add(ue, new MccBoard((Int32)ue));
+            return USB_ERB24s;
+        }
+        private static Dictionary<PORTS, BitVector32.Section> GetPortSections() {
+            Dictionary<PORTS, BitVector32.Section> PortSections = new Dictionary<PORTS, BitVector32.Section>();
+            PortSections.Add(PORTS.A, BitVector32.CreateSection(0b_1111_1111));
+            PortSections.Add(PORTS.B, BitVector32.CreateSection(0b_1111_1111, PortSections[PORTS.A]));
+            PortSections.Add(PORTS.CL, BitVector32.CreateSection(0b_1111, PortSections[PORTS.B]));
+            PortSections.Add(PORTS.CH, BitVector32.CreateSection(0b_1111, PortSections[PORTS.CL]));
+            foreach (PORTS port in Enum.GetValues(typeof(PORTS))) Debug.WriteLine($"PortSections[PORTS.{Enum.GetName(typeof(PORTS), port)}]: '{PortSections[port]}'.");
+            return PortSections;
+        }
 
         public static void Initialize() { foreach (UE ue in USB_ERB24s.Keys) PortsWrite(USB_ERB24s[ue], USB_ERB24_Tests.ports0x00); }
-        // NOTE:  Mustn't invoke TestExecutive.CT_EmergencyStop.ThrowIfCancellationRequested(); on Initialize() or it's invoked methods Reset() & Clear().
+        // NOTE:  Mustn't invoke TestExecutive.CT_EmergencyStop.ThrowIfCancellationRequested(); on Initialize().
 
         public static Boolean Initialized() { return Are(C.S.NC); }
 
@@ -78,11 +100,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         #endregion Is/Are
 
         #region Get
-        public static C.S Get(UE ue, R r) {
-            ErrorInfo errorInfo = USB_ERB24s[ue].DBitIn(DigitalPortType.FirstPortA, (Int32)r, out DigitalLogicState digitalLogicState);
-            if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(USB_ERB24s[ue], errorInfo);
-            return digitalLogicState == DigitalLogicState.Low ? C.S.NC : C.S.NO;
-        }
+        public static C.S Get(UE ue, R r) { return BitRead(USB_ERB24s[ue], (Int32)r) == DigitalLogicState.Low ? C.S.NC : C.S.NO; }
 
         public static Dictionary<R, C.S> Get(UE ue, HashSet<R> rs) {
             Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
@@ -140,8 +158,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         /// one of the four available MccBoard functions for the USB-ERB8 & USB-ERB24.
         /// </summary>
         public static void Set(UE ue, R r, C.S s) {
-            ErrorInfo errorInfo = USB_ERB24s[ue].DBitOut(DigitalPortType.FirstPortA, (Int32)r, s is C.S.NC ? DigitalLogicState.Low : DigitalLogicState.High);
-            if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(USB_ERB24s[ue], errorInfo);
+            BitWrite(USB_ERB24s[ue], (Int32)r, s is C.S.NC ? DigitalLogicState.Low : DigitalLogicState.High);
             Debug.Assert(Is(ue, r, s));
         }
 
@@ -223,7 +240,26 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
 
         #region internal methods
         /// <summary>
-        /// Private methods PortRead() & PortsRead() wrap MccBoard's DIn(DigitalPortType portType, out UInt16 dataValue) function.
+        /// BitRead() wraps MccBoard's DBitIn(DigitalPortType portType, int bitNum, DigitalLogicState bitValue) function.
+        /// one of the four available MccBoard functions for the USB-ERB8 & USB-ERB24.
+        /// </summary>
+        internal static DigitalLogicState BitRead(MccBoard mccBoard, Int32 bitNum) {
+            ErrorInfo errorInfo = mccBoard.DBitIn(DigitalPortType.FirstPortA, bitNum, out DigitalLogicState bitValue);
+            if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(mccBoard, errorInfo);
+            return bitValue;
+        }
+
+        /// <summary>
+        /// BitWrite() wraps MccBoard's DBitOut(DigitalPortType portType, int bitNum, DigitalLogicState bitValue) function.
+        /// one of the four available MccBoard functions for the USB-ERB8 & USB-ERB24.
+        /// </summary>
+        internal static void BitWrite(MccBoard mccBoard, Int32 bitNum, DigitalLogicState bitValue) {
+            ErrorInfo errorInfo = mccBoard.DBitOut(DigitalPortType.FirstPortA, bitNum, bitValue);
+            if (errorInfo.Value != ErrorInfo.ErrorCode.NoErrors) ProcessErrorInfo(mccBoard, errorInfo);
+        }
+
+        /// <summary>
+        /// PortRead() wraps MccBoard's DIn(DigitalPortType portType, out UInt16 dataValue) function.
         /// one of the four available MccBoard functions for the USB-ERB8 & USB-ERB24.
         /// </summary>
         internal static UInt16 PortRead(MccBoard mccBoard, DigitalPortType digitalPortType) {
@@ -242,7 +278,7 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         /// <summary>
-        /// Private methods PortWrite() & PortsWrite() wrap MccBoard's DOut(DigitalPortType portType, UInt16 dataValue) function,
+        /// PortWrite() wraps MccBoard's DOut(DigitalPortType portType, UInt16 dataValue) function,
         /// one of the four available MccBoard functions for the USB-ERB8 & USB-ERB24.
         /// </summary>
         internal static void PortWrite(MccBoard mccBoard, DigitalPortType digitalPortType, UInt16 dataValue) {
@@ -275,31 +311,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
                 $"MccBoard Descriptor : {mccBoard.Descriptor}.{Environment.NewLine}" +
                 $"ErrorInfo Value     : {errorInfo.Value}.{Environment.NewLine}" +
                 $"ErrorInfo Message   : {errorInfo.Message}.{Environment.NewLine}");
-        }
-
-        private static Int32[] GetUE24BitVector32Masks() {
-            Int32 ue24RelayCount = Enum.GetValues(typeof(R)).Length;
-            Debug.Assert(ue24RelayCount == 24);
-            Int32[] ue24BitVector32Masks = new Int32[ue24RelayCount];
-            ue24BitVector32Masks[0] = BitVector32.CreateMask();
-            for (Int32 i = 0; i < ue24RelayCount - 1; i++) ue24BitVector32Masks[i + 1] = BitVector32.CreateMask(ue24BitVector32Masks[i]);
-            return ue24BitVector32Masks;
-        }
-
-        private static Dictionary<UE, MccBoard> GetUSB_ERB24s() {
-            Dictionary<UE, MccBoard> USB_ERB24s = new Dictionary<UE, MccBoard>();
-            foreach (UE ue in Enum.GetValues(typeof(UE))) USB_ERB24s.Add(ue, new MccBoard((Int32)ue));
-            return USB_ERB24s;
-        }
-
-        private static Dictionary<PORTS, BitVector32.Section> GetPortSections() {
-            Dictionary<PORTS, BitVector32.Section> PortSections = new Dictionary<PORTS, BitVector32.Section>();
-            PortSections.Add(PORTS.A, BitVector32.CreateSection(0b_1111_1111));
-            PortSections.Add(PORTS.B, BitVector32.CreateSection(0b_1111_1111, PortSections[PORTS.A]));
-            PortSections.Add(PORTS.CL, BitVector32.CreateSection(0b_1111, PortSections[PORTS.B]));
-            PortSections.Add(PORTS.CH, BitVector32.CreateSection(0b_1111, PortSections[PORTS.CL]));
-            foreach (PORTS port in Enum.GetValues(typeof(PORTS))) Debug.WriteLine($"PortSections[PORTS.{Enum.GetName(typeof(PORTS), port)}]: '{PortSections[port]}'.");
-            return PortSections;
         }
         #endregion internal methods
     }
