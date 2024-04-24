@@ -47,7 +47,7 @@
             /// <summary>
             /// Form C Terminals.
             /// T.C; Form C relay Common terminal.
-            /// T.NO; Form C relay Normally Closed terminal.
+            /// T.NC; Form C relay Normally Closed terminal.
             /// T.NO; Form C relay Normally Open terminal.
             /// </summary>
         }

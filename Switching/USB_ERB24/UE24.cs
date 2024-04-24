@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using MccDaq; // MCC DAQ Universal Library 6.73 from https://www.mccdaq.com/Software-Downloads.
 using static ABT.TestSpace.TestExec.Switching.RelayForms;
 
@@ -149,10 +150,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         #endregion Get
 
         #region Set
-        /// <summary>
-        /// Set(UE ue, R r, C.S s) wraps MccBoard's DBitOut(DigitalPortType portType, Int32 bitNum, DigitalLogicState bitValue) function.
-        /// one of the four available MccBoard functions for the USB-ERB8 & USB-ERB24.
-        /// </summary>
         public static void Set(UE ue, R r, C.S s) {
             BitWrite(USB_ERB24s[ue], (Int32)r, s is C.S.NC ? DigitalLogicState.Low : DigitalLogicState.High);
             Debug.Assert(Is(ue, r, s));
@@ -300,13 +297,13 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         internal static void ProcessErrorInfo(MccBoard mccBoard, ErrorInfo errorInfo) {
-            throw new InvalidOperationException(
-                $"{Environment.NewLine}" +
-                $"MccBoard BoardNum   : {mccBoard.BoardNum}.{Environment.NewLine}" +
-                $"MccBoard BoardName  : {mccBoard.BoardName}.{Environment.NewLine}" +
-                $"MccBoard Descriptor : {mccBoard.Descriptor}.{Environment.NewLine}" +
-                $"ErrorInfo Value     : {errorInfo.Value}.{Environment.NewLine}" +
-                $"ErrorInfo Message   : {errorInfo.Message}.{Environment.NewLine}");
+            StringBuilder sb = new StringBuilder(Environment.NewLine);
+            sb.AppendLine($"MccBoard BoardNum   : {mccBoard.BoardNum}");
+            sb.AppendLine($"MccBoard BoardName  : {mccBoard.BoardName}");
+            sb.AppendLine($"MccBoard Descriptor : {mccBoard.Descriptor}");
+            sb.AppendLine($"ErrorInfo Value     : {errorInfo.Value}");
+            sb.AppendLine($"ErrorInfo Message   : {errorInfo.Message}");
+            throw new InvalidOperationException(sb.ToString());
         }
         #endregion internal methods
     }
