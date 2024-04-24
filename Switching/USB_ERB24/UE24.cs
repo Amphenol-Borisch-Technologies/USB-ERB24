@@ -107,19 +107,15 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
 
         public static Dictionary<R, C.S> Get(UE ue) {
             // Obviously, can utilize MccBoard.DBitIn to read individual bits, instead of MccBoard.DIn to read multiple bits:
-            // - But, the USB-ERB24's reads it's relay states by reading its internal 82C55's ports.
-            // - These ports appear to operate similarly to MccBoard's DIn function, that is, they read the 82C55's 
-            //   port bits simultaneously.
+            // - But, the USB-ERB24 reads it's relay's states by reading its internal 82C55's ports.
+            // - Speculate the USB-ERB24's 822C55 operates in Mode 0, wherein PORTS.A & PORTS.B read all 8 bits collectively, not individually,
+            //   while PORTS.CL & PORTS.CH can read their bits individually, though may also read them collectively.
             // - If correct, then utilizing MccBoard's DBitIn function could be very inefficient compared to
             //   the DIn function, since DBitIn would have to perform similar bit-shifting/bit-setting functions as this method does,
             //   once for each of the USB-ERB24's 24 relays, as opposed to 4 times for this method.
             // - Regardless, if preferred, below /*,*/commented code can replace the entirety of this method.
             /*
-                public static Dictionary<R, C.S> Get(UE ue) {
-                    Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
-                    foreach (R r in Enum.GetValues(typeof(R))) RεS.Add(r, Get(ue, r));
-                    return RεS;
-                }
+                public static Dictionary<R, C.S> Get(UE ue) { return new HashSet<R>(Enum.GetValues(typeof(R)).Cast<R>()).ToDictionary(r => r, r => Get(ue, r)); }
             */
 
             UInt16[] portBits = PortsRead(USB_ERB24s[ue]);
@@ -168,18 +164,16 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             //      - Relays that were NO remain NO.
             //
             // Obviously, can utilize MccBoard.DBitOut to write individual bits, instead of MccBoard.DOut to write multiple bits:
-            // - But, the USB-ERB24's energizes/de-energizes it's relay by writing its internal 82C55's ports.
-            // - These ports appear to operate similarly to MccBoard's DOut function, that is, they write the 
-            //   entire port's bits simultaneously.
+            // - But, the USB-ERB24 energizes/de-energizes it's relays by writing its internal 82C55's ports.
+            // - Speculate the USB-ERB24's 822C55 operates in Mode 0, wherein PORTS.A & PORTS.B write all 8 bits collectively, not individually,
+            //   while PORTS.CL & PORTS.CH can write their bits individually, though may also write them collectively.
             // - If correct, then utilizing MccBoard's DBitOut function could be very inefficient compared to
             //   the DOut function, since it'd have to perform similar And/Or functions as this method does,
             //   once for every call to DBitOut.
             //  - Thought is that DOut will write the bits as simultaneously as possible, at least more so than DBitOut.
             // - Regardless, if preferred, below /*,*/commented code can replace the entirety of this method.
             /*
-                public static void Set(UE ue, Dictionary<R, C.S> RεS) {
-                    foreach (KeyValuePair<R, C.S> kvp in RεS) Set(ue, kvp.Key, kvp.Value);
-                }
+                public static void Set(UE ue, Dictionary<R, C.S> RεS) { foreach (KeyValuePair<R, C.S> kvp in RεS) Set(ue, kvp.Key, kvp.Value); }
             */
 
             UInt32 relayBit;
