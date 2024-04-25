@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using MccDaq; // MCC DAQ Universal Library 6.73 from https://www.mccdaq.com/Software-Downloads.
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static ABT.TestSpace.TestExec.Switching.RelayForms;
 
 namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
@@ -69,34 +70,32 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         public static void Initialize() { foreach (UE ue in USB_ERB24s.Keys) PortsWrite(USB_ERB24s[ue], USB_ERB24_Tests.ports0x00); }
         // NOTE:  Mustn't invoke TestExecutive.CT_EmergencyStop.ThrowIfCancellationRequested(); on Initialize().
 
-        public static Boolean Initialized() { return Are(C.S.NC); }
+        public static Boolean Initialized() {
+            Boolean initialized = true;
+            foreach (UE ue in USB_ERB24s.Keys) initialized &= USB_ERB24_Tests.ports0x00.SequenceEqual(PortsRead(USB_ERB24s[ue]));
+            return initialized;
+        }
 
         #region Is/Are
         public static Boolean Is(UE ue, R r, C.S s) { return Get(ue, r) == s; }
 
         public static Boolean Are(UE ue, HashSet<R> rs, C.S s) {
-            Dictionary<R, C.S> RεS = rs.ToDictionary(r => r, r => s);
-            Dictionary<R, C.S> Are = Get(ue, rs);
-            return RεS.Count == Are.Count && !RεS.Except(Are).Any();
+            Dictionary<R, C.S> rεs = rs.ToDictionary(r => r, r => s);
+            Dictionary<R, C.S> are = Get(ue, rs);
+            return rεs.Count == are.Count && !rεs.Except(are).Any();
         }
 
         public static Boolean Are(UE ue, Dictionary<R, C.S> RεS) {
-            Dictionary<R, C.S> Actual = Get(ue, new HashSet<R>(RεS.Keys));
-            Boolean areEqual = true;
-            foreach (KeyValuePair<R, C.S> kvp in RεS) areEqual &= kvp.Value == Actual[kvp.Key];
-            return areEqual;
+            Dictionary<R, C.S> actual = Get(ue, new HashSet<R>(RεS.Keys));
+            Boolean are = true;
+            foreach (KeyValuePair<R, C.S> kvp in RεS) are &= kvp.Value == actual[kvp.Key];
+            return are;
         }
 
         public static Boolean Are(UE ue, C.S s) {
-            Boolean areEqual = true;
-            foreach (C.S S in Get(ue).Values) areEqual &= S == s;
-            return areEqual;
-        }
-
-        public static Boolean Are(C.S s) {
-            Boolean areEqual = true;
-            foreach (UE ue in USB_ERB24s.Keys) areEqual &= Are(ue, s);
-            return areEqual;
+            Boolean are = true;
+            foreach (C.S S in Get(ue).Values) are &= S == s;
+            return are;
         }
         #endregion Is/Are
 
@@ -127,21 +126,15 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             relayBits |= biggerPortBits[(UInt32)PORTS.A] << 16;
             BitVector32 bitVector32 = new BitVector32((Int32)relayBits);
 
-            Dictionary<R, C.S> RεS = new Dictionary<R, C.S>();
-            for (Int32 i = 0; i < _ue24bitVector32Masks.Length; i++) RεS.Add((R)i, bitVector32[_ue24bitVector32Masks[i]] ? C.S.NO : C.S.NC);
-            return RεS;
+            Dictionary<R, C.S> rεs = new Dictionary<R, C.S>();
+            for (Int32 i = 0; i < _ue24bitVector32Masks.Length; i++) rεs.Add((R)i, bitVector32[_ue24bitVector32Masks[i]] ? C.S.NO : C.S.NC);
+            return rεs;
         }
 
         public static HashSet<R> Get(UE ue, C.S s) {
-            HashSet<R> Rs = new HashSet<R>();
-            foreach (R r in Enum.GetValues(typeof(R))) if (Get(ue, r) == s) Rs.Add(r);
-            return Rs;
-        }
-
-        public static Dictionary<UE, Dictionary<R, C.S>> Get() {
-            Dictionary<UE, Dictionary<R, C.S>> UEεRεS = new Dictionary<UE, Dictionary<R, C.S>>();
-            foreach (UE ue in USB_ERB24s.Keys) UEεRεS.Add(ue, Get(ue));
-            return UEεRεS;
+            HashSet<R> rs = new HashSet<R>();
+            foreach (R r in Enum.GetValues(typeof(R))) if (Get(ue, r) == s) rs.Add(r);
+            return rs;
         }
         #endregion Get
 
@@ -214,14 +207,9 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
         }
 
         public static void Set(UE ue, C.S s) {
-            Dictionary<R, C.S> RεS = new HashSet<R>(Enum.GetValues(typeof(R)).Cast<R>()).ToDictionary(r => r, r => s);
-            Set(ue, RεS);
-            Debug.Assert(Are(ue, RεS));
-        }
-
-        public static void Set(C.S s) {
-            foreach (UE ue in USB_ERB24s.Keys) Set(ue, s);
-            Debug.Assert(Are(s));
+            Dictionary<R, C.S> rεs = new HashSet<R>(Enum.GetValues(typeof(R)).Cast<R>()).ToDictionary(r => r, r => s);
+            Set(ue, rεs);
+            Debug.Assert(Are(ue, rεs));
         }
         #endregion Set
 

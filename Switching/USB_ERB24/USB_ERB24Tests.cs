@@ -210,15 +210,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
                 ConfirmRs(ue, C.S.NO);
             }
         }
-
-        [TestMethod()]
-        [DynamicData(nameof(GetUEs))]
-        public void AreUEs_RεC_Test(HashSet<UE> ues) {
-            foreach (UE ue in ues) PortsWrite(USB_ERB24s[ue], ports0x00);
-            Assert.IsTrue(Are(C.S.NC));
-            foreach (UE ue in ues) PortsWrite(USB_ERB24s[ue], ports0xFF);
-            Assert.IsTrue(Are(C.S.NO));
-        }
         #endregion Is/Are
 
         #region Get
@@ -278,20 +269,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
                 PortsWrite(USB_ERB24s[ue], ports0xFF);
                 Rs = Get(ue, C.S.NO);
                 Assert.IsTrue(Rs.SetEquals(GetRHashSet()));
-            }
-        }
-
-        [TestMethod()]
-        [DynamicData(nameof(GetUEs))]
-        public void GetRεC_Test(HashSet<UE> ues) {
-            Dictionary<UE, Dictionary<R, C.S>> ueεRεC_Test = new Dictionary<UE, Dictionary<R, C.S>>();
-            foreach (UE ue in ues) PortsWrite(USB_ERB24s[ue], ports0x00);
-            foreach (UE ue in ues) ueεRεC_Test.Add(ue, GetDictionaryRεC_NC());
-            Dictionary<UE, Dictionary<R, C.S>> ueεRεC = Get();
-            Assert.AreEqual(ueεRεC_Test.Count, ueεRεC.Count);
-            foreach (UE ue in ues) {
-                Assert.AreEqual(ueεRεC_Test[ue].Count, ueεRεC[ue].Count);
-                Assert.IsTrue(!ueεRεC_Test[ue].Except(ueεRεC[ue]).Any());
             }
         }
         #endregion Get
@@ -372,15 +349,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
                 Set(ue, C.S.NO);
                 Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(USB_ERB24s[ue])));
             }
-        }
-
-        [TestMethod()]
-        [DynamicData(nameof(GetUEs))]
-        public void Set_Test(HashSet<UE> ues) {
-            Set(C.S.NC);
-            foreach (UE ue in ues) Assert.IsTrue(ports0x00.SequenceEqual(PortsRead(USB_ERB24s[ue])));
-            Set(C.S.NO);
-            foreach (UE ue in ues) Assert.IsTrue(ports0xFF.SequenceEqual(PortsRead(USB_ERB24s[ue])));
         }
         #endregion Get
 

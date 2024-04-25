@@ -164,16 +164,6 @@ namespace ABT.TestSpace.TestExec.Switching.USB_ERB24 {
             HashSet<SwitchedRoute> switchedRoutes = new HashSet<SwitchedRoute>();
             foreach (KeyValuePair<SwitchedRoute, HashSet<State>> kvp in SRs) { if (kvp.Key.Contains(SN)) switchedRoutes.Add(kvp.Key); }
             return switchedRoutes;
-            // If can convert:
-            //      - Dictionary<String, HashSet<Terminal>>
-            // to/from:
-            //      - Dictionary<UE, Dictionary<R, C.S>>
-            // Can invoke:
-            //       - Set(Dictionary<UE, Dictionary<R, C.S>> UEεRεS)
-            //       - Are(Dictionary<UE, Dictionary<R, C.SC>> UEεRεS)
-            //       - Get()
-            //
-            // Initially support ERB24's Set(), Is() & Get() functions for discrete/single (UE, R, C.S)
         }
     }
 
